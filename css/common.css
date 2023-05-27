@@ -36,16 +36,17 @@ body {
   --primary: #635fc7;
   --workspace-bg-color: #f4f7fd;
   --border-color: #e4ebfa;
+  --todo-shadow:#d8dff1;
 
   background-color: var(--workspace-bg-color);
   color: var(--text-high-contrast);
 }
 
 header { height: 90px; background-color: var(--secondary-bg-color); }
-header .logo { display: flex; align-items: center; width: 300px; padding: 1rem 1.5rem; height: 100%; border: 1px solid var(--border-color);}
+header .logo { display: flex; align-items: center; min-width: 300px; padding: 1rem 1.5rem; height: 100%; border: 1px solid var(--border-color);}
 header .wrapper { border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center;}  
 
-aside { color: var(--text-low-contrast); background-color: var(--secondary-bg-color); width: 300px; padding: 1rem 1.5rem; padding-bottom: 4rem; padding-right: 2rem; border-right: 1px solid var(--border-color); height: calc(100dvh - 90px); padding-left: 0;}
+aside { color: var(--text-low-contrast); background-color: var(--secondary-bg-color); min-width: 300px; padding: 1rem 1.5rem; padding-bottom: 4rem; padding-right: 2rem; border-right: 1px solid var(--border-color); height: calc(100dvh - 90px); padding-left: 0;}
 aside .total-workspaces {padding-left: 1.5rem; padding-bottom: 1rem;}
 aside .nav > li {padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
 aside .nav > li:hover { color: var(--primary); background-color: var(--primary-light);}
@@ -58,3 +59,9 @@ aside .controls-wrapper { padding-left: 1rem; margin-bottom: 1rem;}
 aside .controls-wrapper .theme-toggle { padding: 1rem; background-color: var(--workspace-bg-color);}
 aside .controls-wrapper .theme-toggle .toggle {background-color: var(--primary); height: 25px; width: 55px; border-radius: 30px; padding: 4px 6px; cursor: pointer;}
 aside .controls-wrapper .theme-toggle .toggle > .slider {background-color: var(--secondary-bg-color); height: 17px; width: 17px; border-radius: 50%;}
+
+main { padding: 1rem; display: flex; overflow-x: scroll; flex-wrap: nowrap; gap: 1rem;}
+main .section { cursor: grab; border-radius: 10px; min-width: 275px; padding: 1rem; color: var(--text-high-contrast); height: max-content; background-color: var(--secondary-bg-color);}
+main .section .section-body { margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;}
+main .section .section-body .todo { font-size: 15px; box-shadow: 0 2px 6px var(--todo-shadow); display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; min-height: 36px; border: 1px solid var(--border-color);}
+.is-dragging { background-color: var(--text-high-contrast); color: var(--workspace-bg-color); scale: 1.05;}
