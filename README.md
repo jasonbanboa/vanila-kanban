@@ -5,13 +5,13 @@
 ```javascript
 {
   workspaces: { 
-    workspaceId: string,
+    workspaceID: string,
     workspaceName: string,
     sections: {
-      sectionId: string,
+      sectionID: string,
       sectionName: string,
       todos: {
-        todoId: string,
+        todoID: string,
         todoName: string,
         description: string,
       }[]
