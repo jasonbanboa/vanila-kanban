@@ -21,7 +21,7 @@
 ```
 
 ## util functions
-* `generateUUID()` => returns unique id; used to set pk for workspace, section, and todos
+* `generateUniqueID()` => returns unique id; used to set pk for workspace, section, and todos
 
 ### any function that modifies the kanban will call these function
 * `getKanbanData()` => gets kaban data from localStorage then returns data parsed to an js object
