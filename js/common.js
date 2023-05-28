@@ -6,28 +6,59 @@ import {
 
 console.log(generateUniqueID());
 
+const $sectionContainers = $$('.section-container');
+const $sections = $$('.section');
+
+$sections.forEach(($section) => {
+  $section.addEventListener('dragstart', (e) => {
+    e.stopPropagation();
+    $section.classList.add('is-dragging');
+  });
+
+  $section.addEventListener('dragend', (e) => {
+    e.stopPropagation();
+    $section.classList.remove('is-dragging');
+  });
+});
+
+$sectionContainers.forEach(($sectionContainer) => {
+  $sectionContainer.addEventListener('dragover', (e) => {
+    e.preventDefault();
+
+    const $currentSection = $('.is-dragging:not(.todo)');
+    if (!$currentSection) return;
+
+    const $currentSectionContainer = $currentSection.closest('.section-container');
+    const $sectionToBeSwitched = $sectionContainer.querySelector('.section');
+
+    $currentSectionContainer.append($sectionToBeSwitched);
+    $sectionContainer.append($currentSection);
+  });
+}); 
+
 const $todos = $$('.todo');
-const $sections = $$('.section-body');
+const $sectionsBodies = $$('.section-body');
 
 $todos.forEach(($todo) => {
-  $todo.addEventListener('dragstart', () => {
+  $todo.addEventListener('dragstart', (e) => {
+    e.stopPropagation();
     $todo.classList.add('is-dragging');
   });
-  $todo.addEventListener('dragend', () => {
+  $todo.addEventListener('dragend', (e) => {
+    e.stopPropagation();
     $todo.classList.remove('is-dragging');
   });
 });
 
-$sections.forEach($section => {
+$sectionsBodies.forEach($section => {
   $section.addEventListener('dragover', (e) => {
     e.preventDefault(); 
     
-    const $bottomTodo = getDragAfterELement($section, e.clientY);
-    const $currentTodo = $('.is-dragging');
-
+    const $currentTodo = $('.is-dragging:not(.section)');
+    
     if (!$currentTodo) return;
-
-    console.log($bottomTodo)
+    
+    const $bottomTodo = getDragAfterTodo($section, e.clientY);
     if ($bottomTodo) {
       $section.insertBefore($currentTodo, $bottomTodo);
     } else {
@@ -36,7 +67,7 @@ $sections.forEach($section => {
   });
 });
 
-function getDragAfterELement($section, mouseY) {
+function getDragAfterTodo($section, mouseY) {
   const $todos = [...$section.querySelectorAll('.todo:not(.is-dragging)')];
 
   return $todos.reduce((closest, $todo) => {
@@ -49,5 +80,8 @@ function getDragAfterELement($section, mouseY) {
       return closest;
     }
   }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
 
+function getDragAfterSection() {
+  
 }
