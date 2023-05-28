@@ -9,12 +9,11 @@ import {
 
 // localStorage.setItem('kanban', JSON.stringify(mockData));
 
-const kanbanData = getKanbanData();
-console.log(kanbanData);
 
-function main() {
-  // these eventListeners need to be updated when new sections or todos are added;
-  
+const $main = $('.workspace main'); 
+
+// these eventListeners need to be updated when new sections or todos are added;
+function addDynamicEventListeners() {
   // section eventListeners
   const $sectionContainers = $$('.section-container');
   const $sections = $$('.section');
@@ -95,6 +94,47 @@ function getDragAfterTodo($section, mouseY) {
 }
 
 
+// renders workspaces and if no workspace 
+function main() {
+
+  const kanbanData = getKanbanData();
+
+  // TODO render view that tells user to create new section; 
+  if (!kanbanData) {
+    return;
+  }
+
+  const { workspaces } = kanbanData;
+  renderWorkspace(workspaces[0]);
+
+}
+
+// renders workspace
+function renderWorkspace({ sections }) {
+  sections.forEach(({ sectionName, todos }) => {
+    const $section = document.createElement('div');
+    $section.className = 'section-container';
+    $section.innerHTML = `
+      <div class="section" draggable="true">
+        <div class="section-head flex">
+          <h4 class="section-title">${sectionName}</h4>
+          <span class="ml-auto actions pointer" role="button">...</span>
+        </div>
+        <div class="section-body">
+          ${todos.reduce((bodyHTML, { todoName }) => {
+            return bodyHTML += `<div class="todo flex" draggable="true">
+              <p class="todo-title">${todoName}</p>
+              <span class="edit ml-auto none" role="button"></span>
+            </div>`;
+          }, '')}
+        </div>
+      </div>
+    `;
+    $main.append($section);
+  });
+}
+
 window.onload = () => {
   main();
+  addDynamicEventListeners();
 } 

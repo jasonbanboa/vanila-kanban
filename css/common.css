@@ -46,6 +46,8 @@ header { height: 90px; background-color: var(--secondary-bg-color); }
 header .logo { display: flex; align-items: center; min-width: 300px; padding: 1rem 1.5rem; height: 100%; border: 1px solid var(--border-color);}
 header .wrapper { border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center;}  
 
+.workspace {width: 100%;}
+
 aside { color: var(--text-low-contrast); background-color: var(--secondary-bg-color); min-width: 300px; padding: 1rem 1.5rem; padding-bottom: 4rem; padding-right: 2rem; border-right: 1px solid var(--border-color); height: calc(100dvh - 90px); padding-left: 0;}
 aside .total-workspaces {padding-left: 1.5rem; padding-bottom: 1rem;}
 aside .nav > li {padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
