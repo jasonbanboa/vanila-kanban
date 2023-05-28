@@ -3,6 +3,7 @@ import {
   $$,
   generateUniqueID,
   getKanbanData,
+  updateKanbanData,
   mockData,
 } from '../lib/util.js' 
 
@@ -12,9 +13,9 @@ import {
 
 const $main = $('.workspace main'); 
 
-// these eventListeners need to be updated when new sections or todos are added;
-function addDynamicEventListeners(WORKSPACE_ID) {
-  console.log(WORKSPACE_ID);
+// NOTE !IMPORTANT
+// these eventListeners need to be updated when new sections or todos are added
+function addDynamicEventListeners(workspace) {
 
   // section eventListeners
   const $sectionContainers = $$('.section-container');
@@ -29,7 +30,29 @@ function addDynamicEventListeners(WORKSPACE_ID) {
     $section.addEventListener('dragend', (e) => {
       e.stopPropagation();
       $section.classList.remove('is-dragging');
-      console.log(WORKSPACE_ID, 'drag ended update me');
+
+      // when drag event is ended order of the section is checked and reduced down to an array of sectionID 
+      const sectionIDOrderArr = $$('.section').reduce((acc, { dataset: { index }}) => [...acc, index],[]);
+      console.log(sectionIDOrderArr);
+
+      // sort the workspace to the correct order;
+      const orderedSections = sectionIDOrderArr.reduce((sections, sectionIDFromArr) => {
+        const section = workspace.sections.find(({ sectionID }) => sectionIDFromArr === sectionID);
+        return [...sections, section];      
+      }, []);
+      
+      // set the correctly ordered sections to temp workspace object
+      const tempWorkspace = structuredClone(workspace);
+      tempWorkspace.sections = orderedSections;
+      
+      const kanbanData = getKanbanData();
+      const workspaceArrayIndex = kanbanData.workspaces.findIndex(({ workspaceID }) => workspaceID === workspace.workspaceID);
+
+      // update kanban data to have correctly ordered section 
+      kanbanData.workspaces[workspaceArrayIndex] = tempWorkspace;
+
+      // set updated data to localStorage
+      updateKanbanData(kanbanData);
     });
   });
   
@@ -60,7 +83,8 @@ function addDynamicEventListeners(WORKSPACE_ID) {
     $todo.addEventListener('dragend', (e) => {
       e.stopPropagation();
       $todo.classList.remove('is-dragging');
-      console.log(WORKSPACE_ID, 'drag ended update me');
+      console.log(workspace, 'drag ended update me');
+
     });
   });
   
@@ -115,17 +139,17 @@ function main() {
 
   renderWorkspace(workspace);
 
-  addDynamicEventListeners(WORKSPACE_ID);
+  addDynamicEventListeners(workspace);
 
 }
 
 // renders workspace
 function renderWorkspace({ sections }) {
-  sections.forEach(({ sectionName, todos }) => {
+  sections.forEach(({ sectionName, sectionID, todos }, i) => {
     const $section = document.createElement('div');
     $section.className = 'section-container';
     $section.innerHTML = `
-      <div class="section" draggable="true">
+      <div data-index="${sectionID}" class="section" draggable="true">
         <div class="section-head flex">
           <h4 class="section-title">${sectionName}</h4>
           <span class="ml-auto actions pointer" role="button">...</span>
