@@ -13,7 +13,9 @@ import {
 const $main = $('.workspace main'); 
 
 // these eventListeners need to be updated when new sections or todos are added;
-function addDynamicEventListeners() {
+function addDynamicEventListeners(WORKSPACE_ID) {
+  console.log(WORKSPACE_ID);
+
   // section eventListeners
   const $sectionContainers = $$('.section-container');
   const $sections = $$('.section');
@@ -27,6 +29,7 @@ function addDynamicEventListeners() {
     $section.addEventListener('dragend', (e) => {
       e.stopPropagation();
       $section.classList.remove('is-dragging');
+      console.log(WORKSPACE_ID, 'drag ended update me');
     });
   });
   
@@ -57,6 +60,7 @@ function addDynamicEventListeners() {
     $todo.addEventListener('dragend', (e) => {
       e.stopPropagation();
       $todo.classList.remove('is-dragging');
+      console.log(WORKSPACE_ID, 'drag ended update me');
     });
   });
   
@@ -96,6 +100,8 @@ function getDragAfterTodo($section, mouseY) {
 
 // renders workspaces and if no workspace 
 function main() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const WORKSPACE_ID = urlParams.get('workspaceID');
 
   const kanbanData = getKanbanData();
 
@@ -105,7 +111,11 @@ function main() {
   }
 
   const { workspaces } = kanbanData;
-  renderWorkspace(workspaces[0]);
+  const workspace = workspaces.find(({ workspaceID }) => workspaceID === WORKSPACE_ID);
+
+  renderWorkspace(workspace);
+
+  addDynamicEventListeners(WORKSPACE_ID);
 
 }
 
@@ -136,5 +146,4 @@ function renderWorkspace({ sections }) {
 
 window.onload = () => {
   main();
-  addDynamicEventListeners();
 } 

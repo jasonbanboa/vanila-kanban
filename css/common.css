@@ -1,6 +1,7 @@
 * {box-sizing: border-box; padding: 0;margin: 0; color: inherit; font-family: sans-serif; } 
 ul { list-style: none;}
 button { background-color: transparent; border: none; cursor: pointer;}
+a {text-decoration: none;}
 
 .flex { display: flex;}
 .flex-1 { flex: 1}
@@ -51,6 +52,7 @@ header .wrapper { border-bottom: 1px solid var(--border-color); padding: 1rem 2r
 aside { color: var(--text-low-contrast); background-color: var(--secondary-bg-color); min-width: 300px; padding: 1rem 1.5rem; padding-bottom: 4rem; padding-right: 2rem; border-right: 1px solid var(--border-color); height: calc(100dvh - 90px); padding-left: 0;}
 aside .total-workspaces {padding-left: 1.5rem; padding-bottom: 1rem;}
 aside .nav > li {padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
+aside .nav > li.active { color: var(--workspace-bg-color); background-color: var(--primary);}
 aside .nav > li:hover { color: var(--primary); background-color: var(--primary-light);}
 aside .nav > li svg { margin-right: 1rem;}
 aside .create-new-workspace {margin-left: 1.5rem; display: inline-block; font-size: 1rem; margin-top: 1rem; transition: all .25s;}
