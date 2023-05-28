@@ -60,8 +60,8 @@ aside .controls-wrapper .theme-toggle { padding: 1rem; background-color: var(--w
 aside .controls-wrapper .theme-toggle .toggle {background-color: var(--primary); height: 25px; width: 55px; border-radius: 30px; padding: 4px 6px; cursor: pointer;}
 aside .controls-wrapper .theme-toggle .toggle > .slider {background-color: var(--secondary-bg-color); height: 17px; width: 17px; border-radius: 50%;}
 
-main { padding: 1rem; display: flex; overflow-x: scroll; flex-wrap: nowrap; gap: 1rem;}
-main .section { cursor: grab; border-radius: 10px; min-width: 275px; padding: 1rem; color: var(--text-high-contrast); height: max-content; background-color: var(--secondary-bg-color);}
-main .section .section-body { margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;}
+main { height: calc(100dvh - 90px); padding: 1rem; display: flex; overflow-x: scroll; flex-wrap: nowrap; gap: 1rem;}
+main .section { cursor: grab; border-radius: 10px; min-width: 275px; padding: 1rem; color: var(--text-high-contrast); height: max-content; background-color: var(--secondary-bg-color); box-shadow: 0 2px 6px var(--todo-shadow);}
+main .section .section-body { min-height: 50px; margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;}
 main .section .section-body .todo { font-size: 15px; box-shadow: 0 2px 6px var(--todo-shadow); display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; min-height: 36px; border: 1px solid var(--border-color);}
-.is-dragging { background-color: var(--text-high-contrast); color: var(--workspace-bg-color); scale: 1.05;}
+.is-dragging { cursor: grabbing; background-color: var(--text-high-contrast); color: var(--workspace-bg-color); scale: 1.05;}
