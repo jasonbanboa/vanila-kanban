@@ -23,7 +23,12 @@ const $workspaceName = $workspaceNameeContainer.querySelector('.workspace-name')
 const $editForm = $workspaceNameeContainer.querySelector('.edit-workspace-name');
 
 const $editTodoDialog = $('.edit-todo-dialog');
+const $editTodoForm = $('.edit-todo-form');
+const $deleteTodo = $('.delete-todo');
+const $cancleEditTodo = $('.cancel-edit-todo'); 
+const $backdrop = $('.backdrop');
 
+console.log($cancleEditTodo)
 
 function addStaticEventListeners() {
   // changing workspace name 
@@ -59,6 +64,14 @@ function addStaticEventListeners() {
       $editForm.workspaceName.blur();
     });
   });
+
+  $backdrop.addEventListener('click', (e) => {
+    if (e.target === $backdrop) closeEditDialog();
+  });
+
+  $cancleEditTodo.onclick = closeEditDialog;
+
+
 }
 
 // NOTE !IMPORTANT
@@ -111,32 +124,56 @@ function addDynamicEventListeners() {
       });
     });
   });
-
-  const $backdrop = $('.backdrop');
-  console.log($backdrop)
-  $backdrop.addEventListener('click', (e) => {
-    if (e.target === $backdrop) closeEditDialog();
-  });
   
   const $editTodoButtons = $$('.edit-todo-button');
   $editTodoButtons.forEach(($editTodoButton) => {
     $editTodoButton.addEventListener('click', (e) => {
 
       openEditDialog();
-      const todo = e.target.closest('.todo');
+      const $todo = e.target.closest('.todo');
+      const { dataset: { index: todoID } } = $todo;
       const { dataset: { index: sectionID } } = e.target.closest('.section');
 
-      console.log(todo, sectionID);
-      const { top, left, width, height } = todo.getBoundingClientRect();
+      console.log($todo, sectionID);
+      const { top, left, width, height } = $todo.getBoundingClientRect();
       
       Object.assign($editTodoDialog, {
         style: `top: ${top}px; left: ${left}px; width: ${width}px; height: ${height * 2}px;`
+      });     
+
+      $editTodoForm.editTodo.value = $todo.textContent.trim();
+      // TODO: 
+      // add dataset for sectionID and todoID so submit event and delete can be static event
+
+      // change this to be static eventListner
+      $editTodoForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const input = $editTodoForm.editTodo.value;
+        if (!input.trim()) return;
+
+        const kanbanData = getKanbanData();
+        const workspace = getCurrentWorkspace();
+
+        const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+        const sectionArrIndex = findSectionArrIndex(workspace, sectionID);
+
+        const section = kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex];
+
+        const editedTodos = section.todos.reduce((todos, todo) => {
+          if (todo.todoID === todoID)
+            return [...todos , { ...todo, todoName: input }];
+          return [...todos, todo];
+        }, []);
+
+        kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex].todos = editedTodos;
+
+        updateKanbanData(kanbanData);
+        closeEditDialog();
       });
 
-
-
     });
-  });
+  });  
 }
 
 // renders workspace
