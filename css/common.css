@@ -73,6 +73,6 @@ main .section .section-body .todo { font-size: 15px; box-shadow: 0 2px 6px var(-
 .is-dragging { background-color: var(--text-high-contrast) !important; color: var(--workspace-bg-color) !important; scale: 1.05; }
 .is-dragging .todo {box-shadow: none !important}
 
-.section-title-conditional-render {cursor: pointer; min-width: 220px;}
-.section-title-conditional-render input {padding: 3px; border-radius: 5px; width: 100%; border: none; outline: none;}
-.section-title-conditional-render input:focus { box-shadow:0 0 1px inset var(--primary-light); border: 2px solid var(--primary);}
+.conditional-render {cursor: pointer; min-width: 220px;}
+.conditional-render input {padding: 3px; border-radius: 5px; width: 100%; border: none; outline: none;}
+.conditional-render input:focus { box-shadow:0 0 1px inset var(--primary-light); border: 2px solid var(--primary);}

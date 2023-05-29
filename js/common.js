@@ -16,6 +16,46 @@ import {
 // setMockData()
 
 const $main = $('.workspace main'); 
+const $workspaceNameeContainer = $('.workspace-title-conditional-render');
+const $workspaceName = $workspaceNameeContainer.querySelector('.workspace-name');
+const $editForm = $workspaceNameeContainer.querySelector('.edit-workspace-name');
+
+
+function addStaticEventListeners() {
+  // changing workspace name 
+  $workspaceNameeContainer.addEventListener('click', (e) => {
+    
+    if ($editForm.classList.contains('none')) {
+      $workspaceName.classList.add('none');
+      $editForm.classList.remove('none');
+      $editForm.workspaceName.value = $workspaceName.textContent; 
+      $editForm.workspaceName.focus();
+    }
+
+    $editForm.workspaceName.addEventListener('focusout', () => {
+      $workspaceName.classList.remove('none');
+      $editForm.classList.add('none');
+    });
+
+    $editForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = e.target.workspaceName.value;
+      
+      if (!input.trim()) return;
+
+      const kanbanData = getKanbanData();
+      const workspace = getCurrentWorkspace();
+
+      const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+
+      kanbanData.workspaces[workspaceArrIndex].workspaceName = input;
+
+      updateKanbanData(kanbanData);
+      $workspaceName.textContent = input;
+      $editForm.workspaceName.blur();
+    });
+  });
+}
 
 // NOTE !IMPORTANT
 // these eventListeners need to be updated when new sections or todos are added
@@ -160,7 +200,6 @@ function addDynamicEventListeners() {
     });
   });
 
-  // TODO:  add event lisnter for edits
   const $sectionTitlesConditionalRenders = $$('.section-title-conditional-render');
   console.log($sectionTitlesConditionalRenders);
 
@@ -185,7 +224,8 @@ function addDynamicEventListeners() {
         e.preventDefault();
         const input = e.target.sectionTitle.value;
 
-        // update data and re render
+        if (!input.trim()) return;
+
         const { dataset: { index: thisSectionID } } = e.target.closest('.section');
         console.log(thisSectionID);
 
@@ -202,17 +242,16 @@ function addDynamicEventListeners() {
 
         kanbanData.workspaces[workspaceArrIndex] = workspace;
 
-
         updateKanbanData(kanbanData);
       });
     });
-  })
+  });
+
 }
 
 // renders workspace
 function renderWorkspace() {
-  const { sections } = getCurrentWorkspace();
-  console.log(sections)
+  const { sections, workspaceName } = getCurrentWorkspace();
 
   sections.forEach(({ sectionName, sectionID, todos }) => {
     console.log(todos)
@@ -221,7 +260,7 @@ function renderWorkspace() {
     $section.innerHTML = `
       <div data-index="${sectionID}" class="section" draggable="true">
         <div class="section-head flex">
-          <div class="section-title-conditional-render">
+          <div class="conditional-render section-title-conditional-render">
             <h4 class="section-title ">${sectionName}</h4>
             <form class="edit-section-title-form none">
               <input type="text" name="sectionTitle">
@@ -258,14 +297,16 @@ function main() {
     throw new Error('TODO SHOW USER INVALID ID');
   }
 
+  $workspaceName.textContent = workspace.workspaceName;
+
   renderWorkspace();
   addDynamicEventListeners();
-
+  addStaticEventListeners();
 }
 
 export function reRender() {
   $main.innerHTML = '';
-
+  
   renderWorkspace();
   addDynamicEventListeners();
 }

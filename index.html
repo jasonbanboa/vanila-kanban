@@ -13,12 +13,19 @@
     <header class="flex">
       <h1 class="logo">vanila kanban</h1>
       <div class="wrapper flex-1">
-        <h2 class="workspace-name">Example Workspace</h2>
+
+        <div class="workspace-title-conditional-render conditional-render">
+          <h2 class="workspace-name">Example Workspace</h2>
+          <form class="edit-workspace-name none">
+            <input type="text" name="workspaceName">
+          </form>
+        </div>
+        
         <span class="ml-auto pointer">...</span>
       </div>
     </header>
     <section class="flex workspace">
-      <aside class="flex flex-col none">
+      <aside class="flex flex-col">
         <div class="wrapper">
           <p class="total-workspaces">TOTAL WORKSPACES (3)</p>
           <ul class="nav">
