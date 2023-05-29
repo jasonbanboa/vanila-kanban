@@ -30,7 +30,7 @@ TODO
 
 ### any function that modifies the kanban will call these function
 * `getKanbanData()` => gets kaban data from localStorage then returns data parsed to an js object
-* `updateKanbanData()`: TODO
+* `updateKanbanData(updatedKanbanData)` => takes an object of workspaces, stringifies then updates to localstorage 
 
 ```javascript
 function modifiesKanbanData() {
