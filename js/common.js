@@ -88,6 +88,7 @@ function addDynamicEventListeners() {
       e.stopPropagation();
       $todo.classList.add('is-dragging');
     });
+
     $todo.addEventListener('dragend', (e) => {
       e.stopPropagation();
       $todo.classList.remove('is-dragging');
@@ -149,11 +150,60 @@ function addDynamicEventListeners() {
   });
 
   // TODO:  add event lisnter for edits
+  const $sectionTitlesConditionalRenders = $$('.section-title-conditional-render');
+  console.log($sectionTitlesConditionalRenders);
+
+  $sectionTitlesConditionalRenders.forEach(($conditionalRenders) => {
+    $conditionalRenders.addEventListener('click', () => {
+      const $sectionTitle = $conditionalRenders.querySelector('.section-title');
+      const $editSectionTitleForm = $conditionalRenders.querySelector('.edit-section-title-form');
+
+      if ($editSectionTitleForm.classList.contains('none')) {
+        $sectionTitle.classList.add('none');
+        $editSectionTitleForm.classList.remove('none');
+        $editSectionTitleForm.sectionTitle.value = $sectionTitle.textContent; 
+        $editSectionTitleForm.sectionTitle.focus();
+      }
+
+      $editSectionTitleForm.sectionTitle.addEventListener('focusout', (e) => {
+        $sectionTitle.classList.remove('none');
+        $editSectionTitleForm.classList.add('none');
+      });
+
+      $editSectionTitleForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = e.target.sectionTitle.value;
+        console.log(input);
+        $sectionTitle.classList.remove('none');
+        $editSectionTitleForm.classList.add('none');
+        // update data and re render
+        const { dataset: { index: thisSectionID } } = e.target.closest('.section');
+        console.log(thisSectionID);
+
+        const kanbanData = getKanbanData();
+        
+        const workspace = getCurrentWorkspace();
+        const workspaceArrIndex = kanbanData.workspaces.findIndex(({ workspaceID }) => workspaceID === workspace.workspaceID); 
+
+        const sectionArrIndex = workspace.sections.findIndex(({ sectionID }) => sectionID === thisSectionID);
+
+        workspace.sections[sectionArrIndex] = {
+          ...workspace.sections[sectionArrIndex],
+          sectionName: input
+        }
+
+        kanbanData.workspaces[workspaceArrIndex] = workspace;
+        updateKanbanData(kanbanData);
+        reRender();
+      });
+    });
+  })
 }
 
 // renders workspace
 function renderWorkspace() {
   const { sections } = getCurrentWorkspace();
+  console.log(sections)
 
   sections.forEach(({ sectionName, sectionID, todos }) => {
     const $section = document.createElement('div');
@@ -161,7 +211,12 @@ function renderWorkspace() {
     $section.innerHTML = `
       <div data-index="${sectionID}" class="section" draggable="true">
         <div class="section-head flex">
-          <h4 class="section-title">${sectionName}</h4>
+          <div class="section-title-conditional-render">
+            <h4 class="section-title ">${sectionName}</h4>
+            <form class="edit-section-title-form none">
+              <input type="text" name="sectionTitle">
+            </form>
+          </div>
           <span class="ml-auto actions pointer" role="button">...</span>
         </div>
         <div class="section-body">
@@ -180,7 +235,7 @@ function renderWorkspace() {
 
 
 function main() {
-  
+
   const kanbanData = getKanbanData();
 
   // TODO render view that tells user to create new section; 
@@ -194,9 +249,15 @@ function main() {
   }
 
   renderWorkspace();
-
   addDynamicEventListeners();
 
+}
+
+function reRender() {
+  $main.innerHTML = '';
+  
+  renderWorkspace();
+  addDynamicEventListeners();
 }
 
 window.onload = () => {
