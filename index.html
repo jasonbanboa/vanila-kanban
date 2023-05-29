@@ -9,7 +9,7 @@
 </head>
 <body>
   
-  <div id="app">
+  <div id="app" class="rel">
     <header class="flex">
       <h1 class="logo">vanila kanban</h1>
       <div class="wrapper flex-1">
@@ -71,38 +71,21 @@
       </aside>
 
       <main class="flex-1">
-
-       <!-- <div class="section-container">
-          <div class="section" draggable="true">
-            <div class="section-head flex">
-              <div class="conditional-render">
-                <h4 class="section-title">📃 Todo</h4>
-                
-              </div>
-              <span class="ml-auto actions pointer" role="button">...</span>
-            </div>
-            <div class="section-body">
-              <div class="todo flex" draggable="true">
-                <p class="todo-title">todo 1</p>
-                <span class="edit ml-auto none" role="button"></span>
-              </div>
-              <div class="todo flex" draggable="true">
-                <p class="todo-title">todo 2</p>
-                <span class="edit ml-auto none" role="button"></span>
-              </div>
-              <div class="todo flex" draggable="true">
-                <p class="todo-title">todo 3</p>
-                <span class="edit ml-auto none" role="button"></span>
-              </div>
-            </div>
-          </div>
-        </div> -->
-      
+        <!-- sections and todos are added here -->
 
       </main>
     </section>
   </div>
 
+  <div class="backdrop abs none">
+    <div class="edit-todo-dialog abs">
+      <form class="edit-todo-form rel">
+        <textarea name="editTodo"></textarea>
+        <input class="abs" type="submit" value="Save">
+      </form>
+    </div>
+
+  </div>
 
   <script src="./js/common.js" type="module"></script>
 </body>

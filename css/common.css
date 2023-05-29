@@ -2,6 +2,7 @@
 ul { list-style: none;}
 button { background-color: transparent; border: none; cursor: pointer;}
 a {text-decoration: none;}
+input[type="submit"] {outline: none; border: none;}
 
 .flex { display: flex;}
 .flex-1 { flex: 1}
@@ -69,10 +70,27 @@ main { height: calc(100dvh - 90px); padding: 1rem; display: flex; overflow-x: sc
 main .section-container { min-width: 275px;}
 main .section { cursor: grab; border-radius: 10px; min-width: 275px; padding: 1rem; color: var(--text-high-contrast); height: max-content; background-color: var(--secondary-bg-color); box-shadow: 0 2px 6px var(--todo-shadow);}
 main .section .section-body { min-height: 50px; margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;}
-main .section .section-body .todo { font-size: 15px; box-shadow: 0 2px 6px var(--todo-shadow); display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; min-height: 36px; border: 1px solid var(--border-color);}
+main .section .section-body .todo { cursor: pointer; font-size: 15px; box-shadow: 0 2px 6px var(--todo-shadow); display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; min-height: 36px; border: 1px solid var(--border-color);}
+main .section .section-body .todo:hover {background-color: rgb(245, 245, 245);}
+main .section .section-body .todo:hover .icon {display: block;}
+main .section .section-body .todo .icon { border-radius: 5px; transform: translateY(-50%); display: none; position: absolute; right: 10px; top: 50%; width: 25px; height: 25px; padding: 6px;}
+main .section .section-body .todo .icon:hover {background-color: rgb(224, 224, 224);}
+
 .is-dragging { background-color: var(--text-high-contrast) !important; color: var(--workspace-bg-color) !important; scale: 1.05; }
 .is-dragging .todo {box-shadow: none !important}
 
 .conditional-render {cursor: pointer; min-width: 220px;}
 .conditional-render input {padding: 3px; border-radius: 5px; width: 100%; border: none; outline: none;}
 .conditional-render input:focus { box-shadow:0 0 1px inset var(--primary-light); border: 2px solid var(--primary);}
+.workspace-title-conditional-render input { font-size: 1.5rem ; width: 275px; }
+
+dialog { border: none; border-radius: 10px; height: 500px; width: 500px; background-color: rgba(0, 0, 0, 0.732);}
+
+
+
+.backdrop {inset: 0; background-color:  rgba(0, 0, 0, 0.7);}
+
+.edit-todo-dialog form {width: 100%; height: 100%;}
+.edit-todo-dialog form textarea {width: 100%; height: 100%; border-radius: 10px; padding: 10px; overflow: hidden; resize: none; border: none; outline: none;}
+.edit-todo-dialog form textarea:focus { box-shadow:0 0 1px inset var(--primary-light); border: 2px solid var(--primary); }
+.edit-todo-dialog form input[type="submit"] {background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
