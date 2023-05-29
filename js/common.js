@@ -1,3 +1,4 @@
+import { dragHandler } from './drag.js';
 import { 
   $, 
   $$,
@@ -6,11 +7,12 @@ import {
   updateKanbanData,
   getCurrentWorkspace,
   setMockData,
-  getDragAfterTodo,
-  getLiveIDsArray,
   findWorkspaceArrIndex,
   findSectionArrIndex,
+  openEditDialog,
+  closeEditDialog,
 } from '../lib/util.js' 
+
 
 // // incase of reset 
 // setMockData()
@@ -20,10 +22,12 @@ const $workspaceNameeContainer = $('.workspace-title-conditional-render');
 const $workspaceName = $workspaceNameeContainer.querySelector('.workspace-name');
 const $editForm = $workspaceNameeContainer.querySelector('.edit-workspace-name');
 
+const $editTodoDialog = $('.edit-todo-dialog');
+
 
 function addStaticEventListeners() {
   // changing workspace name 
-  $workspaceNameeContainer.addEventListener('click', (e) => {
+  $workspaceNameeContainer.addEventListener('click', () => {
     
     if ($editForm.classList.contains('none')) {
       $workspaceName.classList.add('none');
@@ -61,147 +65,9 @@ function addStaticEventListeners() {
 // these eventListeners need to be updated when new sections or todos are added
 function addDynamicEventListeners() {
 
-  // section eventListeners
-  const $sectionContainers = $$('.section-container');
-  const $sections = $$('.section');
-  
-  $sections.forEach(($section) => {
-
-    $section.addEventListener('dragstart', (e) => {
-      e.stopPropagation();
-      $section.classList.add('is-dragging');
-    });
-  
-    $section.addEventListener('dragend', (e) => {
-      e.stopPropagation();
-      $section.classList.remove('is-dragging');
-
-      const workspace = getCurrentWorkspace();
-
-      // when drag event is ended order of the section is checked and reduced down to an array of sectionID
-      const liveSectionIDOrderArr = getLiveIDsArray($$('.section'));
-      console.log(liveSectionIDOrderArr);
-
-      // sort the workspace to the correct order;
-      const orderedSections = liveSectionIDOrderArr.reduce((sections, sectionIDFromArr) => {
-        const section = workspace.sections.find(({ sectionID }) => sectionIDFromArr === sectionID);
-        return [...sections, section];      
-      }, []);
-      
-      // set the correctly ordered sections to temp workspace object
-      const tempWorkspace = structuredClone(workspace);
-      tempWorkspace.sections = orderedSections;
-      
-      const kanbanData = getKanbanData();
-      const workspaceArrayIndex = findWorkspaceArrIndex(kanbanData, workspace);
-
-      // update kanban data to have correctly ordered section 
-      kanbanData.workspaces[workspaceArrayIndex] = tempWorkspace;
-
-      // set updated data to localStorage
-      updateKanbanData(kanbanData);
-    });
-  });
-  
-  $sectionContainers.forEach(($sectionContainer) => {
-    $sectionContainer.addEventListener('dragover', (e) => {
-      e.preventDefault();
-  
-      const $currentSection = $('.is-dragging:not(.todo)');
-      if (!$currentSection) return;
-  
-      const $currentSectionContainer = $currentSection.closest('.section-container');
-      const $sectionToBeSwitched = $sectionContainer.querySelector('.section');
-  
-      $currentSectionContainer.append($sectionToBeSwitched);
-      $sectionContainer.append($currentSection);
-    });
-  }); 
-  
-  // todo eventListeners
-  const $todos = $$('.todo');
-  const $sectionsBodies = $$('.section-body');
-  
-  $todos.forEach(($todo) => {
-
-    const { dataset: { index: originalSectionID }} = $todo.closest('.section');
-    console.log(originalSectionID);
-
-    $todo.addEventListener('dragstart', (e) => {
-      e.stopPropagation();
-      $todo.classList.add('is-dragging');
-    });
-
-    $todo.addEventListener('dragend', (e) => {
-      e.stopPropagation();
-      $todo.classList.remove('is-dragging');
-
-      const workspace = getCurrentWorkspace();
-
-      // 0. find the section that is being edited
-      const currentSectionArrIndex = findSectionArrIndex(workspace, originalSectionID);
-
-      // 1. find the todo that was dragged from kanban data then clone
-      const draggedTodoID = $todo.dataset.index;
-      const draggedTodoClone = structuredClone(workspace.sections[currentSectionArrIndex].todos.find(({ todoID }) => todoID === draggedTodoID));
-
-      // 2. remove the todo from kanban data
-      const removedDragginTodofromTodos = workspace.sections[currentSectionArrIndex].todos.filter(({ todoID }) => todoID !== draggedTodoID);
-      workspace.sections[currentSectionArrIndex].todos = removedDragginTodofromTodos;
-
-      // 3. find the live todo order using
-      const $relocatedSection = $todo.closest('.section');
-      const relocatedSectionID = $relocatedSection.dataset.index;
-
-      const relocatedSectionArrIndex = findSectionArrIndex(workspace, relocatedSectionID);
-
-      const liveTodosIDOrders = getLiveIDsArray([...$relocatedSection.querySelectorAll('.todo')]);
-      
-      console.log({ originalSectionID, relocatedSectionID });
-
-
-      // 4. sort the kanban data
-      const orderedTodos = liveTodosIDOrders.reduce((todos, currentTodoID) => {
-        
-        const todo = workspace.sections[relocatedSectionArrIndex].todos.find(({ todoID }) => currentTodoID === todoID);
-        if (!todo) 
-          return [...todos, draggedTodoClone];
-        return [...todos, todo];
-      }, []);
-
-      console.log("ORDERED TODOS", orderedTodos);
-      workspace.sections[relocatedSectionArrIndex].todos = orderedTodos;
-
-      // 5. update localStorage
-      const kanbanData = getKanbanData();
-      const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-
-      kanbanData.workspaces[workspaceArrIndex] = workspace;
-
-      console.log('FINAL DATA', kanbanData);
-      updateKanbanData(kanbanData);
-    });
-  });
-  
-  $sectionsBodies.forEach($section => {
-    $section.addEventListener('dragover', (e) => {
-      e.preventDefault(); 
-      
-      const $currentTodo = $('.is-dragging:not(.section)');
-      
-      if (!$currentTodo) return;
-      
-      const $bottomTodo = getDragAfterTodo($section, e.clientY);
-      if ($bottomTodo) {
-        $section.insertBefore($currentTodo, $bottomTodo);
-      } else {
-        $section.append($currentTodo);
-      }
-    });
-  });
+  dragHandler();
 
   const $sectionTitlesConditionalRenders = $$('.section-title-conditional-render');
-  console.log($sectionTitlesConditionalRenders);
 
   $sectionTitlesConditionalRenders.forEach(($conditionalRenders) => {
     $conditionalRenders.addEventListener('click', () => {
@@ -227,7 +93,6 @@ function addDynamicEventListeners() {
         if (!input.trim()) return;
 
         const { dataset: { index: thisSectionID } } = e.target.closest('.section');
-        console.log(thisSectionID);
 
         const kanbanData = getKanbanData();
         const workspace = getCurrentWorkspace();
@@ -247,14 +112,38 @@ function addDynamicEventListeners() {
     });
   });
 
+  const $backdrop = $('.backdrop');
+  console.log($backdrop)
+  $backdrop.addEventListener('click', (e) => {
+    if (e.target === $backdrop) closeEditDialog();
+  });
+  
+  const $editTodoButtons = $$('.edit-todo-button');
+  $editTodoButtons.forEach(($editTodoButton) => {
+    $editTodoButton.addEventListener('click', (e) => {
+
+      openEditDialog();
+      const todo = e.target.closest('.todo');
+      const { dataset: { index: sectionID } } = e.target.closest('.section');
+
+      console.log(todo, sectionID);
+      const { top, left, width, height } = todo.getBoundingClientRect();
+      
+      Object.assign($editTodoDialog, {
+        style: `top: ${top}px; left: ${left}px; width: ${width}px; height: ${height * 2}px;`
+      });
+
+
+
+    });
+  });
 }
 
 // renders workspace
 function renderWorkspace() {
-  const { sections, workspaceName } = getCurrentWorkspace();
+  const { sections } = getCurrentWorkspace();
 
   sections.forEach(({ sectionName, sectionID, todos }) => {
-    console.log(todos)
     const $section = document.createElement('div');
     $section.className = 'section-container';
     $section.innerHTML = `
@@ -270,9 +159,13 @@ function renderWorkspace() {
         </div>
         <div class="section-body">
           ${todos.reduce((bodyHTML, todo) => {
-            return bodyHTML += `<div data-index="${todo.todoID}" class="todo flex" draggable="true">
+            return bodyHTML += `<div data-index="${todo.todoID}" class="todo rel flex" draggable="true">
               <p class="todo-title">${todo.todoName}</p>
-              <span class="edit ml-auto none" role="button"></span>
+              
+              <span role="button" class="icon edit-todo-button">
+                <svg fill="#808080" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>
+              </span>
+
             </div>`;
           }, '')}
         </div>
