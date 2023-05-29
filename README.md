@@ -1,9 +1,8 @@
 # vanila-kanban
 TODO 
-1. sections can also be dragged and dropped
-2. rendering sections and todos with temporarry mock data
-3. when sections or todos positions are changed must update using localstorage
-
+1. edit todos
+2. edit section names
+3. edit workspace names
 
  'kanban' is set in localstorage <br/>
 `JSON.parse(localStorage.getItem('kanban'))` returns
