@@ -1,8 +1,9 @@
 # vanila-kanban
 TODO 
-1. edit todos
-2. create new todos
-3. create new sections
+1. delete todos
+2. refactor so edit, delete are static events
+3. create new todos
+4. create new sections
 
  'kanban' is set in localstorage <br/>
 `JSON.parse(localStorage.getItem('kanban'))` returns
