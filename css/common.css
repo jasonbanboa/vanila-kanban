@@ -94,3 +94,6 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .edit-todo-dialog form textarea {width: 100%; height: 100%; border-radius: 10px; padding: 10px; overflow: hidden; resize: none; border: none; outline: none;}
 .edit-todo-dialog form textarea:focus { box-shadow:0 0 1px inset var(--primary-light); border: 2px solid var(--primary); }
 .edit-todo-dialog form input[type="submit"] {background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
+.edit-todo-dialog form .controls { left: 105%; top: 0; display: flex; flex-direction: column; gap: 10px;}
+.edit-todo-dialog form .controls button { transition: all .25s; border-radius: 3px; background-color:  rgba(0, 0, 0, 0.6); color: white; padding: 5px 8px; white-space: nowrap;}
+.edit-todo-dialog form .controls button:hover { transform: translateX(5px); background-color: rgba(0, 0, 0, 0.8); } 
