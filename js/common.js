@@ -5,14 +5,13 @@ import {
   getKanbanData,
   updateKanbanData,
   getCurrentWorkspace,
-  mockData,
+  setMockData,
+  getDragAfterTodo,
   getLiveIDsArray,
 } from '../lib/util.js' 
 
-
-// localStorage.setItem('kanban', JSON.stringify(mockData));
-// const data = getKanbanData().workspaces[0].workspaceID;
-// console.log(data);
+// // incase of reset 
+// setMockData()
 
 const $main = $('.workspace main'); 
 
@@ -98,27 +97,20 @@ function addDynamicEventListeners() {
      // 0. find the section that is being edited
       const currentSectionArrIndex = workspace.sections.findIndex(({ sectionID }) => sectionID === originalSectionID);
 
-      // 1. find the todo what was dragged from kanban data
+      // 1. find the todo that was dragged from kanban data then clone
       const draggedTodoID = $todo.dataset.index;
       const draggedTodoClone = {...workspace.sections[currentSectionArrIndex].todos.find(({ todoID }) => todoID === draggedTodoID)};
-      // make a clone of the todo so it can be inserted to the correct section when dragend
-      console.log(draggedTodoClone);
 
       // 2. remove the todo from kanban data
       const removedDragginTodofromTodos = workspace.sections[currentSectionArrIndex].todos.filter(({ todoID }) => todoID !== draggedTodoID);
       workspace.sections[currentSectionArrIndex].todos = removedDragginTodofromTodos;
 
-      // todo that has been removed has now be removed from the kanban data
-      console.log(workspace);
-
-      // 3. find the live order using the $todo.closest('.section');
+      // 3. find the live todo order using
       const $relocatedSection = $todo.closest('.section');
       const relocatedSectionID = $relocatedSection.dataset.index;
       const relocatedSectionArrIndex = workspace.sections.findIndex(({ sectionID }) => sectionID === relocatedSectionID);
 
-
       const liveTodosIDOrders = getLiveIDsArray([...$relocatedSection.querySelectorAll('.todo')]);
-      console.log(liveTodosIDOrders);
       
       // 4. sort the kanban data
       const orderedTodos = liveTodosIDOrders.reduce((todos, currentTodoID) => {
@@ -130,7 +122,6 @@ function addDynamicEventListeners() {
 
       workspace.sections[relocatedSectionArrIndex].todos = orderedTodos;
 
-      console.log(workspace);
       // 5. update localStorage
       const kanbanData = getKanbanData();
       const workspaceArrIndex = kanbanData.workspaces.findIndex(({ workspaceID }) => workspaceID === workspace.workspaceID);
@@ -156,21 +147,35 @@ function addDynamicEventListeners() {
       }
     });
   });
+
+  // TODO:  add event lisnter for edits
 }
 
-function getDragAfterTodo($section, mouseY) {
-  const $todos = [...$section.querySelectorAll('.todo:not(.is-dragging)')];
+// renders workspace
+function renderWorkspace() {
+  const { sections } = getCurrentWorkspace();
 
-  return $todos.reduce((closest, $todo) => {
-    const box = $todo.getBoundingClientRect();
-    const offset = mouseY - box.top - box.height / 2;
-    
-    if (offset < 0 && offset > closest.offset) {
-      return { offset: offset, element: $todo };
-    } else {
-      return closest;
-    }
-  }, { offset: Number.NEGATIVE_INFINITY }).element;
+  sections.forEach(({ sectionName, sectionID, todos }) => {
+    const $section = document.createElement('div');
+    $section.className = 'section-container';
+    $section.innerHTML = `
+      <div data-index="${sectionID}" class="section" draggable="true">
+        <div class="section-head flex">
+          <h4 class="section-title">${sectionName}</h4>
+          <span class="ml-auto actions pointer" role="button">...</span>
+        </div>
+        <div class="section-body">
+          ${todos.reduce((bodyHTML, { todoName, todoID }) => {
+            return bodyHTML += `<div data-index="${todoID}" class="todo flex" draggable="true">
+              <p class="todo-title">${todoName}</p>
+              <span class="edit ml-auto none" role="button"></span>
+            </div>`;
+          }, '')}
+        </div>
+      </div>
+    `;
+    $main.append($section);
+  });
 }
 
 
@@ -192,33 +197,6 @@ function main() {
 
   addDynamicEventListeners();
 
-}
-
-// renders workspace
-function renderWorkspace() {
-  const { sections } = getCurrentWorkspace();
-
-  sections.forEach(({ sectionName, sectionID, todos }, i) => {
-    const $section = document.createElement('div');
-    $section.className = 'section-container';
-    $section.innerHTML = `
-      <div data-index="${sectionID}" class="section" draggable="true">
-        <div class="section-head flex">
-          <h4 class="section-title">${sectionName}</h4>
-          <span class="ml-auto actions pointer" role="button">...</span>
-        </div>
-        <div class="section-body">
-          ${todos.reduce((bodyHTML, { todoName, todoID }) => {
-            return bodyHTML += `<div data-index="${todoID}" class="todo flex" draggable="true">
-              <p class="todo-title">${todoName}</p>
-              <span class="edit ml-auto none" role="button"></span>
-            </div>`;
-          }, '')}
-        </div>
-      </div>
-    `;
-    $main.append($section);
-  });
 }
 
 window.onload = () => {
