@@ -172,6 +172,11 @@ function addDynamicEventListeners() {
         closeEditDialog();
       });
 
+      // delete todo but also refactor to be static eventListner
+      $deleteTodo.addEventListener('click', (e) => {
+        console.log(e.target, 'delete todo');
+      });
+      
     });
   });  
 }
