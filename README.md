@@ -1,8 +1,8 @@
 # vanila-kanban
 TODO 
 1. edit todos
-2. edit section names
-3. edit workspace names
+2. create new todos
+3. create new sections
 
  'kanban' is set in localstorage <br/>
 `JSON.parse(localStorage.getItem('kanban'))` returns
