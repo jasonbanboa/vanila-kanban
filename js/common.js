@@ -145,8 +145,9 @@ function addDynamicEventListeners() {
 // renders workspace
 function renderWorkspace() {
   const { sections } = getCurrentWorkspace();
+  const $createNewSecton = $('.create-new-section'); 
 
-  sections.forEach(({ sectionName, sectionID, todos }) => {
+  sections.forEach(({ sectionName, sectionID, todos }, i) => {
     const $section = document.createElement('div');
     $section.className = 'section-container';
     $section.innerHTML = `
@@ -186,7 +187,45 @@ function renderWorkspace() {
         </div>
       </div>
     `;
-    $main.append($section);
+    $main.append($section)
+
+    if (sections.length - 1 === i) {
+      const $createNewSection = document.createElement('div') 
+      Object.assign($createNewSection, {
+        innerHTML: `
+          <span>+</span> Add a new section
+          <form class="new-section-form none abs">
+            <input name="sectionName" placeholder="Enter the section name" />
+            <input type="submit" value="Add section"/>
+          </form>
+        `,
+        className: 'flex create-new-section rel',        
+      });
+
+      const $newSectionform = $createNewSection.querySelector('.new-section-form');
+
+      $createNewSection.addEventListener('click', () => {  
+        if ($newSectionform.classList.contains('none')) {
+          $newSectionform.classList.remove('none');
+          $createNewSection.classList.add('grow');
+          $newSectionform.sectionName.focus();
+        }
+      });
+
+      $newSectionform.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log('submitted');
+      });
+
+      $newSectionform.sectionName.addEventListener('focusout', () => {
+        setTimeout(() => {
+          $createNewSection.classList.remove('grow');
+          $newSectionform.classList.add('none');
+        }, 50);
+      });  
+
+      $main.append($createNewSection);
+    }
   });
 }
 
