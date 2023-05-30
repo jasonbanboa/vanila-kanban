@@ -28,8 +28,6 @@ const $deleteTodo = $('.delete-todo');
 const $cancleEditTodo = $('.cancel-edit-todo'); 
 const $backdrop = $('.backdrop');
 
-console.log($cancleEditTodo)
-
 function addStaticEventListeners() {
   // changing workspace name 
   $workspaceNameeContainer.addEventListener('click', () => {
@@ -71,6 +69,52 @@ function addStaticEventListeners() {
 
   $cancleEditTodo.onclick = closeEditDialog;
 
+  $editTodoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const { dataset: { todoid: todoID } } = $editTodoForm;
+    const { dataset: { sectionid: sectionID } } = $editTodoForm;
+
+    const input = $editTodoForm.editTodo.value;
+    if (!input.trim()) return;
+
+    const kanbanData = getKanbanData();
+    const workspace = getCurrentWorkspace();
+
+    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+    const sectionArrIndex = findSectionArrIndex(workspace, sectionID);
+
+    const section = kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex];
+
+    const editedTodos = section.todos.reduce((todos, todo) => {
+      if (todo.todoID === todoID)
+        return [...todos , { ...todo, todoName: input }];
+      return [...todos, todo];
+    }, []);
+
+    kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex].todos = editedTodos;
+
+    updateKanbanData(kanbanData);
+    closeEditDialog();
+  });
+
+  $deleteTodo.addEventListener('click', (e) => {
+    const { dataset: { todoid: todoID } } = $editTodoForm;
+    const { dataset: { sectionid: sectionID } } = $editTodoForm;
+
+    const kanbanData = getKanbanData();
+    const workspace = getCurrentWorkspace();
+
+    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+    const sectionArrIndex = findSectionArrIndex(workspace, sectionID);
+
+    const section = kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex];
+    const filteredTodos = section.todos.filter((todo) => todo.todoID !== todoID);
+
+    kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex].todos = filteredTodos;
+
+    updateKanbanData(kanbanData);
+    closeEditDialog();
+  });
 
 }
 
@@ -142,41 +186,8 @@ function addDynamicEventListeners() {
       });     
 
       $editTodoForm.editTodo.value = $todo.textContent.trim();
-      // TODO: 
-      // add dataset for sectionID and todoID so submit event and delete can be static event
-
-      // change this to be static eventListner
-      $editTodoForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const input = $editTodoForm.editTodo.value;
-        if (!input.trim()) return;
-
-        const kanbanData = getKanbanData();
-        const workspace = getCurrentWorkspace();
-
-        const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-        const sectionArrIndex = findSectionArrIndex(workspace, sectionID);
-
-        const section = kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex];
-
-        const editedTodos = section.todos.reduce((todos, todo) => {
-          if (todo.todoID === todoID)
-            return [...todos , { ...todo, todoName: input }];
-          return [...todos, todo];
-        }, []);
-
-        kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex].todos = editedTodos;
-
-        updateKanbanData(kanbanData);
-        closeEditDialog();
-      });
-
-      // delete todo but also refactor to be static eventListner
-      $deleteTodo.addEventListener('click', (e) => {
-        console.log(e.target, 'delete todo');
-      });
-      
+      $editTodoForm.dataset.todoid = todoID;
+      $editTodoForm.dataset.sectionid = sectionID; 
     });
   });  
 }
