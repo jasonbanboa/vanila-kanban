@@ -1,4 +1,5 @@
 import { dragHandler } from './drag.js';
+import { addStaticEventListeners } from './static.js';
 import { 
   $, 
   $$,
@@ -20,106 +21,10 @@ import {
 const $main = $('.workspace main'); 
 const $workspaceNameeContainer = $('.workspace-title-conditional-render');
 const $workspaceName = $workspaceNameeContainer.querySelector('.workspace-name');
-const $editForm = $workspaceNameeContainer.querySelector('.edit-workspace-name');
-
 const $editTodoDialog = $('.edit-todo-dialog');
 const $editTodoForm = $('.edit-todo-form');
-const $deleteTodo = $('.delete-todo');
-const $cancleEditTodo = $('.cancel-edit-todo'); 
-const $backdrop = $('.backdrop');
 
-function addStaticEventListeners() {
-  // changing workspace name 
-  $workspaceNameeContainer.addEventListener('click', () => {
-    
-    if ($editForm.classList.contains('none')) {
-      $workspaceName.classList.add('none');
-      $editForm.classList.remove('none');
-      $editForm.workspaceName.value = $workspaceName.textContent; 
-      $editForm.workspaceName.focus();
-    }
-
-    $editForm.workspaceName.addEventListener('focusout', () => {
-      $workspaceName.classList.remove('none');
-      $editForm.classList.add('none');
-    });
-
-    $editForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const input = e.target.workspaceName.value;
-      
-      if (!input.trim()) return;
-
-      const kanbanData = getKanbanData();
-      const workspace = getCurrentWorkspace();
-
-      const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-
-      kanbanData.workspaces[workspaceArrIndex].workspaceName = input;
-
-      updateKanbanData(kanbanData);
-      $workspaceName.textContent = input;
-      $editForm.workspaceName.blur();
-    });
-  });
-
-  $backdrop.addEventListener('click', (e) => {
-    if (e.target === $backdrop) closeEditDialog();
-  });
-
-  $cancleEditTodo.onclick = closeEditDialog;
-
-  $editTodoForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const { dataset: { todoid: todoID } } = $editTodoForm;
-    const { dataset: { sectionid: sectionID } } = $editTodoForm;
-
-    const input = $editTodoForm.editTodo.value;
-    if (!input.trim()) return;
-
-    const kanbanData = getKanbanData();
-    const workspace = getCurrentWorkspace();
-
-    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-    const sectionArrIndex = findSectionArrIndex(workspace, sectionID);
-
-    const section = kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex];
-
-    const editedTodos = section.todos.reduce((todos, todo) => {
-      if (todo.todoID === todoID)
-        return [...todos , { ...todo, todoName: input }];
-      return [...todos, todo];
-    }, []);
-
-    kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex].todos = editedTodos;
-
-    updateKanbanData(kanbanData);
-    closeEditDialog();
-  });
-
-  $deleteTodo.addEventListener('click', (e) => {
-    const { dataset: { todoid: todoID } } = $editTodoForm;
-    const { dataset: { sectionid: sectionID } } = $editTodoForm;
-
-    const kanbanData = getKanbanData();
-    const workspace = getCurrentWorkspace();
-
-    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-    const sectionArrIndex = findSectionArrIndex(workspace, sectionID);
-
-    const section = kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex];
-    const filteredTodos = section.todos.filter((todo) => todo.todoID !== todoID);
-
-    kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex].todos = filteredTodos;
-
-    updateKanbanData(kanbanData);
-    closeEditDialog();
-  });
-
-}
-
-// NOTE !IMPORTANT
-// these eventListeners need to be updated when new sections or todos are added
+// these eventListeners need to be updated when state is changed
 function addDynamicEventListeners() {
 
   dragHandler();
@@ -190,6 +95,51 @@ function addDynamicEventListeners() {
       $editTodoForm.dataset.sectionid = sectionID; 
     });
   });  
+
+  const $addTodoButtons = $$('.create-todo');
+  $addTodoButtons.forEach(($button) => {
+    const $section = $button.closest('.section');
+    const $form = $section.querySelector('.create-todo-form');
+    const { dataset: { index: sectionID } } = $section;
+
+    $button.addEventListener('click', () => {
+      if ($form.classList.contains('none')) {
+        $button.classList.add('none');
+        $form.classList.remove('none');
+        $form.createTodo.focus();
+      }
+    });
+
+    $form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = $form.createTodo.value.trim();
+      
+      if (!input) return;
+
+      const createdTodo = {
+        todoID: generateUniqueID(),
+        todoName: input,
+        description: null,
+      }   
+
+      const kanbanData = getKanbanData();
+      const workspace = getCurrentWorkspace();
+
+      const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+      const sectionArrIndex = findSectionArrIndex(workspace, sectionID);
+
+      kanbanData.workspaces[workspaceArrIndex].sections[sectionArrIndex].todos.push(createdTodo);
+
+      updateKanbanData(kanbanData);
+    });
+   
+    $form.createTodo.addEventListener('focusout', () => {
+      setTimeout(() => {
+        $button.classList.remove('none');
+        $form.classList.add('none');
+      }, 100);
+    });
+  });
 }
 
 // renders workspace
@@ -222,6 +172,18 @@ function renderWorkspace() {
             </div>`;
           }, '')}
         </div>
+        <div class="conditional-render create-todo-conditional-render">
+          <div role="button" class="create-todo">
+            <span>+</span> Add a Todo
+          </div> 
+          <form class="create-todo-form none">
+            <textarea name="createTodo" placeholder="Describe yourself here..."></textarea>
+            <input type="submit" name="submitForm" value="Add Todo"> 
+            <button type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#808080" viewBox="0 0 384 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/></svg>
+            </button>
+          </form>
+        </div>
       </div>
     `;
     $main.append($section);
@@ -230,7 +192,6 @@ function renderWorkspace() {
 
 
 function main() {
-
   const kanbanData = getKanbanData();
 
   // TODO render view that tells user to create new section; 
@@ -252,7 +213,6 @@ function main() {
 
 export function reRender() {
   $main.innerHTML = '';
-  
   renderWorkspace();
   addDynamicEventListeners();
 }

@@ -15,7 +15,7 @@ input[type="submit"] {outline: none; border: none;}
 .gap-6 {gap: 6rem}
 .rel {position: relative;}
 .abs {position: absolute;}
-.none {display: none;}
+.none {display: none !important;}
 .block { display: block;}
 .ml-auto {margin-left: auto;}
 .mr-auto {margin-right: auto;}
@@ -39,6 +39,7 @@ body {
   --workspace-bg-color: #f4f7fd;
   --border-color: #e4ebfa;
   --todo-shadow:#d8dff1;
+  --todo-hover-color: rgb(245, 245, 245);
 
   background-color: var(--workspace-bg-color);
   color: var(--text-high-contrast);
@@ -67,22 +68,33 @@ aside .controls-wrapper .theme-toggle .toggle > .slider {background-color: var(-
 
 
 main { height: calc(100dvh - 90px); padding: 1rem; display: flex; overflow-x: scroll; flex-wrap: nowrap; gap: 1rem;}
-main .section-container { min-width: 275px;}
+main .section-container { max-width: 275px;}
 main .section { cursor: grab; border-radius: 10px; min-width: 275px; padding: 1rem; color: var(--text-high-contrast); height: max-content; background-color: var(--secondary-bg-color); box-shadow: 0 2px 6px var(--todo-shadow);}
-main .section .section-body { min-height: 50px; margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;}
+main .section .section-body { min-height: 30px; margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;}
 main .section .section-body .todo { cursor: pointer; font-size: 15px; box-shadow: 0 2px 6px var(--todo-shadow); display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; min-height: 36px; border: 1px solid var(--border-color);}
-main .section .section-body .todo:hover {background-color: rgb(245, 245, 245);}
+main .section .section-body .todo:hover {background-color: var(--todo-hover-color);}
 main .section .section-body .todo:hover .icon {display: block;}
 main .section .section-body .todo .icon { border-radius: 5px; transform: translateY(-50%); display: none; position: absolute; right: 10px; top: 50%; width: 25px; height: 25px; padding: 6px;}
 main .section .section-body .todo .icon:hover {background-color: rgb(224, 224, 224);}
+main .section .create-todo {margin-top: 1rem; color: var(--text-low-contrast); cursor: pointer; font-size: 15px; display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; height: 30px;}
+main .section .create-todo:hover {background-color: var(--todo-hover-color);}
+main .section .create-todo span {font-size: 27px; margin-right: 5px; transform: translateY(-3px);}
 
 .is-dragging { background-color: var(--text-high-contrast) !important; color: var(--workspace-bg-color) !important; scale: 1.05; }
 .is-dragging .todo {box-shadow: none !important}
 
 .conditional-render {cursor: pointer; min-width: 220px;}
 .conditional-render input {padding: 3px; border-radius: 5px; width: 100%; border: none; outline: none;}
-.conditional-render input:focus { box-shadow:0 0 1px inset var(--primary-light); border: 2px solid var(--primary);}
+.conditional-render input:focus { box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary);}
 .workspace-title-conditional-render input { font-size: 1.5rem ; width: 275px; }
+
+.create-todo-conditional-render {width: 100%; margin-top: 1rem;}
+.create-todo-conditional-render form {width: 100%;}
+.create-todo-conditional-render form textarea {width: 100%; resize: none; height: 60px;border-radius: 10px; padding: 8px; border: none; outline: none; }
+.create-todo-conditional-render form textarea:focus {box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary);}
+.create-todo-conditional-render form input[type="submit"] { background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px; width: 100px;}
+.create-todo-conditional-render form button{padding: 10px;}
+.create-todo-conditional-render form button svg {width: 18px; height: 18px; transform: translateY(3px);}
 
 dialog { border: none; border-radius: 10px; height: 500px; width: 500px; background-color: rgba(0, 0, 0, 0.732);}
 
@@ -92,8 +104,8 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 
 .edit-todo-dialog form {width: 100%; height: 100%;}
 .edit-todo-dialog form textarea {width: 100%; height: 100%; border-radius: 10px; padding: 10px; overflow: hidden; resize: none; border: none; outline: none;}
-.edit-todo-dialog form textarea:focus { box-shadow:0 0 1px inset var(--primary-light); border: 2px solid var(--primary); }
+.edit-todo-dialog form textarea:focus { box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary); }
 .edit-todo-dialog form input[type="submit"] {background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
 .edit-todo-dialog form .controls { left: 105%; top: 0; display: flex; flex-direction: column; gap: 10px;}
 .edit-todo-dialog form .controls button { transition: all .25s; border-radius: 3px; background-color:  rgba(0, 0, 0, 0.6); color: white; padding: 5px 8px; white-space: nowrap;}
-.edit-todo-dialog form .controls button:hover { transform: translateX(5px); background-color: rgba(0, 0, 0, 0.8); } 
+.edit-todo-dialog form .controls button:hover { transform: translateX(5px); background-color: rgba(0, 0, 0, 0.8); }     
