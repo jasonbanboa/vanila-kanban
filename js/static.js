@@ -6,6 +6,7 @@ import {
   findWorkspaceArrIndex,
   findSectionArrIndex,
   closeEditDialog,
+  generateUniqueID,
 } from '../lib/util.js' 
 
 const $workspaceNameeContainer = $('.workspace-title-conditional-render');
@@ -18,6 +19,48 @@ const $cancleEditTodo = $('.cancel-edit-todo');
 const $backdrop = $('.backdrop');
 
 export function addStaticEventListeners() {
+  
+  const $createNewSection = $('.create-new-section');
+
+  const $newSectionform = $createNewSection.querySelector('.new-section-form');
+
+  $createNewSection.addEventListener('click', () => {  
+    if ($newSectionform.classList.contains('none')) {
+      $newSectionform.classList.remove('none');
+      $createNewSection.classList.add('grow');
+      $newSectionform.sectionName.focus();
+    }
+  });
+
+  $newSectionform.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = $newSectionform.sectionName.value.trim();
+    if (!input) return;
+
+    const kanbanData = getKanbanData();
+    const workspace = getCurrentWorkspace();
+
+    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+
+    const createdSection = {
+      sectionID: generateUniqueID(),
+      sectionName: input,
+      todos: []
+    }
+
+    workspace.sections.push(createdSection);
+    kanbanData.workspaces[workspaceArrIndex] = workspace;
+    $newSectionform.reset();
+    $newSectionform.sectionName.blur() 
+    updateKanbanData(kanbanData);
+  });
+
+  $newSectionform.sectionName.addEventListener('focusout', () => {
+    setTimeout(() => {
+      $createNewSection.classList.remove('grow');
+      $newSectionform.classList.add('none');
+    }, 100);
+  });  
   
 
   // changing workspace name 
