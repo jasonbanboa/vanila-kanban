@@ -18,6 +18,8 @@ const $cancleEditTodo = $('.cancel-edit-todo');
 const $backdrop = $('.backdrop');
 
 export function addStaticEventListeners() {
+  
+
   // changing workspace name 
   $workspaceNameeContainer.addEventListener('click', () => {
     

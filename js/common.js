@@ -29,6 +29,18 @@ function addDynamicEventListeners() {
 
   dragHandler();
 
+  const $sectionActions = $$('.section .actions');
+  $sectionActions.forEach(($action) => {
+    $action.addEventListener('click', () => {
+      const $popup = $action.closest('.section').querySelector('.actions-popup');
+      
+      if ($popup.classList.contains('none')) {
+        $popup.classList.remove('none');
+      }
+
+    });
+  });
+
   const $sectionTitlesConditionalRenders = $$('.section-title-conditional-render');
 
   $sectionTitlesConditionalRenders.forEach(($conditionalRenders) => {
@@ -152,14 +164,25 @@ function renderWorkspace() {
     $section.className = 'section-container';
     $section.innerHTML = `
       <div data-index="${sectionID}" class="section" draggable="true">
-        <div class="section-head flex">
+        <div class="section-head flex rel">
           <div class="conditional-render section-title-conditional-render">
             <h4 class="section-title ">${sectionName}</h4>
             <form class="edit-section-title-form none">
               <input type="text" name="sectionTitle">
             </form>
           </div>
-          <span class="ml-auto actions pointer" role="button">...</span>
+          <span class="ml-auto actions pointer" role="button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#808080" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M8 256a56 56 0 1 1 112 0A56 56 0 1 1 8 256zm160 0a56 56 0 1 1 112 0 56 56 0 1 1 -112 0zm216-56a56 56 0 1 1 0 112 56 56 0 1 1 0-112z"/></svg>
+          </span>
+          <div class="abs none actions-popup">
+            <h4 class="text-center">List actions</h4>
+            <ul class="flex flex-col gap-1">
+              <li type="button">Add todo...</li>
+              <li type="button">Copy section...</li>
+              <li type="button">Move section...</li>
+              <li type="button">Delete section</li>
+            </ul>
+          </div>
         </div>
         <div class="section-body">
           ${todos.reduce((bodyHTML, todo) => {
@@ -272,5 +295,16 @@ export function reRender() {
 }
 
 window.onload = () => {
+  window.addEventListener('click', (e) => {
+    // if ($$('.actions').reduce((acc, el) => el.contains(e.target), )) return;
+    
+    $$('.section .actions-popup').forEach(($popup) => {
+      if (!$popup.classList.contains('none') && !$popup.contains(e.target)) {
+        $popup.classList.add('none');
+        console.log("close");
+        console.log(e.target);
+      }  
+    })
+  })
   main();
 } 
