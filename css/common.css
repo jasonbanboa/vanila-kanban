@@ -89,7 +89,7 @@ main .section .section-body .todo .icon:hover {background-color: rgb(224, 224, 2
 main .section .section-body .todo .icon svg {display: block;}
 main .section .create-todo {margin-top: 1rem; color: var(--text-low-contrast); cursor: pointer; font-size: 15px; display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; height: 30px;}
 main .section .create-todo:hover {background-color: var(--todo-hover-color);}
-main .section .create-todo span {font-size: 27px; margin-right: 5px; transform: translateY(-3px);}
+main .section .create-todo span {font-size: 27px; margin-right: 5px}
 
 .is-dragging { background-color: var(--text-high-contrast) !important; color: var(--workspace-bg-color) !important; scale: 1.05; }
 .is-dragging .todo {box-shadow: none !important}
@@ -126,5 +126,6 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .create-new-section .new-section-form input {margin-top: 1px; font-size: 15px; width: 100%; padding: 5px;}
 .create-new-section .new-section-form input:focus {box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary);}
 .grow {height: 90px; transition: all .2s;}
-.create-new-section span { font-size: 27px; margin-right: 5px; transform: translateY(-3px);}
+.create-new-section { color: var(--text-low-contrast);}
+.create-new-section span { font-size: 27px; margin-right: 5px;}
 .create-new-section form input[type="button"] { margin-top: 10px; background-color: var(--primary); width: 100px; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
