@@ -1,9 +1,12 @@
 # vanila-kanban
 TODO 
-1. delete todos
-2. refactor so edit, delete are static events
-3. create new todos
-4. create new sections
+1. dark and light theme
+2. hide and show aside 
+3. give workspace name when creating
+4. delete workspace
+5. get todos details
+6. aditional section action list features 
+7. aditional workspace action list features 
 
  'kanban' is set in localstorage <br/>
 `JSON.parse(localStorage.getItem('kanban'))` returns
