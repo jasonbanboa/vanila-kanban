@@ -214,14 +214,29 @@ function renderWorkspace() {
 
       $newSectionform.addEventListener('submit', (e) => {
         e.preventDefault();
-        console.log('submitted');
+        const input = $newSectionform.sectionName.value.trim();
+        if (!input) return;
+
+        const kanbanData = getKanbanData();
+        const workspace = getCurrentWorkspace();
+
+        const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+
+        const createdSection = {
+          sectionID: generateUniqueID(),
+          sectionName: input,
+          todos: []
+        }
+        workspace.sections.push(createdSection);
+        kanbanData.workspaces[workspaceArrIndex] = workspace;
+        updateKanbanData(kanbanData);
       });
 
       $newSectionform.sectionName.addEventListener('focusout', () => {
         setTimeout(() => {
           $createNewSection.classList.remove('grow');
           $newSectionform.classList.add('none');
-        }, 50);
+        }, 100);
       });  
 
       $main.append($createNewSection);
@@ -235,7 +250,7 @@ function main() {
 
   // TODO render view that tells user to create new section; 
   if (!kanbanData) {
-    throw new Error('TODO SHOW USER THAT THEY HAVE NO WORKSPACE ');
+    setMockData();
   }
 
   const workspace = getCurrentWorkspace();
