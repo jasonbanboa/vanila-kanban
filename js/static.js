@@ -32,8 +32,7 @@ export function addStaticEventListeners() {
     }
   });
 
-  $newSectionform.addEventListener('submit', (e) => {
-    e.preventDefault();
+  $newSectionform.querySelector('input[type="button"]').addEventListener('mousedown', (e) => {
     const input = $newSectionform.sectionName.value.trim();
     if (!input) return;
 
@@ -56,10 +55,10 @@ export function addStaticEventListeners() {
   });
 
   $newSectionform.sectionName.addEventListener('focusout', () => {
-    setTimeout(() => {
+    // setTimeout(() => {
       $createNewSection.classList.remove('grow');
       $newSectionform.classList.add('none');
-    }, 100);
+    // }, 100);
   });  
   
 

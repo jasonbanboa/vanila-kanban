@@ -130,6 +130,7 @@ function addDynamicEventListeners() {
   $addTodoButtons.forEach(($button) => {
     const $section = $button.closest('.section');
     const $form = $section.querySelector('.create-todo-form');
+    const $submit = $form.querySelector('input[type="button"]');
     const { dataset: { index: sectionID } } = $section;
 
     $button.addEventListener('click', () => {
@@ -140,8 +141,7 @@ function addDynamicEventListeners() {
       }
     });
 
-    $form.addEventListener('submit', (e) => {
-      e.preventDefault();
+    $submit.addEventListener('mousedown', (e) => {
       const input = $form.createTodo.value.trim();
       
       if (!input) return;
@@ -164,10 +164,8 @@ function addDynamicEventListeners() {
     });
    
     $form.createTodo.addEventListener('focusout', () => {
-      setTimeout(() => {
-        $button.classList.remove('none');
-        $form.classList.add('none');
-      }, 100);
+      $button.classList.remove('none');
+      $form.classList.add('none');
     });
   });
 }
@@ -289,7 +287,7 @@ function renderWorkspace() {
           </div> 
           <form class="create-todo-form none">
             <textarea name="createTodo" placeholder="Describe yourself here..."></textarea>
-            <input type="submit" name="submitForm" value="Add Todo"> 
+            <input type="button" name="submitForm" value="Add Todo"> 
             <button type="button">
               <svg xmlns="http://www.w3.org/2000/svg" fill="#808080" viewBox="0 0 384 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/></svg>
             </button>

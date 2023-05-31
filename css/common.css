@@ -103,7 +103,7 @@ main .section .create-todo span {font-size: 27px; margin-right: 5px; transform: 
 .create-todo-conditional-render form {width: 100%;}
 .create-todo-conditional-render form textarea {width: 100%; resize: none; height: 60px;border-radius: 10px; padding: 8px; border: none; outline: none; }
 .create-todo-conditional-render form textarea:focus {box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary);}
-.create-todo-conditional-render form input[type="submit"] { background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px; width: 100px;}
+.create-todo-conditional-render form input[type="button"] { background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px; width: 100px;}
 .create-todo-conditional-render form button{padding: 10px;}
 .create-todo-conditional-render form button svg {width: 18px; height: 18px; transform: translateY(3px);}
 
@@ -127,4 +127,4 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .create-new-section .new-section-form input:focus {box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary);}
 .grow {height: 90px; transition: all .2s;}
 .create-new-section span { font-size: 27px; margin-right: 5px; transform: translateY(-3px);}
-.create-new-section form input[type="submit"] { margin-top: 10px; background-color: var(--primary); width: 100px; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
+.create-new-section form input[type="button"] { margin-top: 10px; background-color: var(--primary); width: 100px; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
