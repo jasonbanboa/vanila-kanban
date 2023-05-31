@@ -29,14 +29,32 @@ function addDynamicEventListeners() {
 
   dragHandler();
 
+  const $deleteSections = $$('li.delete-section');
+  $deleteSections.forEach(($deleteSectionButton) => {
+    $deleteSectionButton.addEventListener('click', (e) => {
+      const { dataset : { sectionid: sectionID } } = e.target;
+      console.log(sectionID);
+
+      const kanbanData = getKanbanData();
+      const workspace = getCurrentWorkspace();
+      const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+
+      const editedSections = workspace.sections.filter((section) => section.sectionID !== sectionID);
+      workspace.sections = editedSections;
+      kanbanData.workspaces[workspaceArrIndex] = workspace;
+      updateKanbanData(kanbanData);
+
+    });
+  });
+
   const $sectionActions = $$('.section .actions');
   $sectionActions.forEach(($action) => {
     $action.addEventListener('click', () => {
       const $popup = $action.closest('.section').querySelector('.actions-popup');
       
-      if ($popup.classList.contains('none')) {
+      // if ($popup.classList.contains('none')) {
         $popup.classList.remove('none');
-      }
+      // }
 
     });
   });
@@ -157,9 +175,20 @@ function addDynamicEventListeners() {
 // renders workspace
 function renderWorkspace() {
   const { sections } = getCurrentWorkspace();
-  const $createNewSecton = $('.create-new-section'); 
 
   sections.forEach(({ sectionName, sectionID, todos }, i) => {
+
+    const todoHTML = todos && todos.reduce((bodyHTML, todo) => {
+      return bodyHTML += `<div data-index="${todo.todoID}" class="todo rel flex" draggable="true">
+        <p class="todo-title">${todo.todoName}</p>
+        
+        <span role="button" class="icon edit-todo-button">
+          <svg fill="#808080" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>
+        </span>
+
+      </div>`;
+    }, '')
+    
     const $section = document.createElement('div');
     $section.className = 'section-container';
     $section.innerHTML = `
@@ -172,29 +201,20 @@ function renderWorkspace() {
             </form>
           </div>
           <span class="ml-auto actions pointer" role="button">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#808080" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M8 256a56 56 0 1 1 112 0A56 56 0 1 1 8 256zm160 0a56 56 0 1 1 112 0 56 56 0 1 1 -112 0zm216-56a56 56 0 1 1 0 112 56 56 0 1 1 0-112z"/></svg>
+            <svg class="actions" xmlns="http://www.w3.org/2000/svg" fill="#808080" viewBox="0 0 448 512"><path class="actions" d="M8 256a56 56 0 1 1 112 0A56 56 0 1 1 8 256zm160 0a56 56 0 1 1 112 0 56 56 0 1 1 -112 0zm216-56a56 56 0 1 1 0 112 56 56 0 1 1 0-112z"/></svg>
           </span>
           <div class="abs none actions-popup">
             <h4 class="text-center">List actions</h4>
             <ul class="flex flex-col gap-1">
-              <li type="button">Add todo...</li>
-              <li type="button">Copy section...</li>
-              <li type="button">Move section...</li>
-              <li type="button">Delete section</li>
+              <li type="button" data-sectionid="${sectionID}" class="add-todo">Add todo...</li>
+              <li type="button" data-sectionid="${sectionID}" class="copy-section">Copy section...</li>
+              <li type="button" data-sectionid="${sectionID}" class="move-section">Move section...</li>
+              <li type="button" data-sectionid="${sectionID}" class="delete-section">Delete section</li>
             </ul>
           </div>
         </div>
         <div class="section-body">
-          ${todos.reduce((bodyHTML, todo) => {
-            return bodyHTML += `<div data-index="${todo.todoID}" class="todo rel flex" draggable="true">
-              <p class="todo-title">${todo.todoName}</p>
-              
-              <span role="button" class="icon edit-todo-button">
-                <svg fill="#808080" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>
-              </span>
-
-            </div>`;
-          }, '')}
+          ${todoHTML || ''}
         </div>
         <div class="conditional-render create-todo-conditional-render">
           <div role="button" class="create-todo">
@@ -210,60 +230,9 @@ function renderWorkspace() {
         </div>
       </div>
     `;
-    $main.append($section)
+    const $createNewSection = $('.create-new-section');
 
-    if (sections.length - 1 === i) {
-      const $createNewSection = document.createElement('div') 
-      Object.assign($createNewSection, {
-        innerHTML: `
-          <span>+</span> Add a new section
-          <form class="new-section-form none abs">
-            <input name="sectionName" placeholder="Enter the section name" />
-            <input type="submit" value="Add section"/>
-          </form>
-        `,
-        className: 'flex create-new-section rel',        
-      });
-
-      const $newSectionform = $createNewSection.querySelector('.new-section-form');
-
-      $createNewSection.addEventListener('click', () => {  
-        if ($newSectionform.classList.contains('none')) {
-          $newSectionform.classList.remove('none');
-          $createNewSection.classList.add('grow');
-          $newSectionform.sectionName.focus();
-        }
-      });
-
-      $newSectionform.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = $newSectionform.sectionName.value.trim();
-        if (!input) return;
-
-        const kanbanData = getKanbanData();
-        const workspace = getCurrentWorkspace();
-
-        const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-
-        const createdSection = {
-          sectionID: generateUniqueID(),
-          sectionName: input,
-          todos: []
-        }
-        workspace.sections.push(createdSection);
-        kanbanData.workspaces[workspaceArrIndex] = workspace;
-        updateKanbanData(kanbanData);
-      });
-
-      $newSectionform.sectionName.addEventListener('focusout', () => {
-        setTimeout(() => {
-          $createNewSection.classList.remove('grow');
-          $newSectionform.classList.add('none');
-        }, 100);
-      });  
-
-      $main.append($createNewSection);
-    }
+    $main.insertBefore($section, $createNewSection);
   });
 }
 
@@ -289,14 +258,14 @@ function main() {
 }
 
 export function reRender() {
-  $main.innerHTML = '';
+  $$('.section-container').forEach(($section) => $section.remove());
   renderWorkspace();
   addDynamicEventListeners();
 }
 
 window.onload = () => {
   window.addEventListener('click', (e) => {
-    // if ($$('.actions').reduce((acc, el) => el.contains(e.target), )) return;
+    if (e.target.classList.contains('actions')) return;
     
     $$('.section .actions-popup').forEach(($popup) => {
       if (!$popup.classList.contains('none') && !$popup.contains(e.target)) {
