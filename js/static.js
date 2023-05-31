@@ -55,10 +55,8 @@ export function addStaticEventListeners() {
   });
 
   $newSectionform.sectionName.addEventListener('focusout', () => {
-    // setTimeout(() => {
       $createNewSection.classList.remove('grow');
       $newSectionform.classList.add('none');
-    // }, 100);
   });  
   
 
