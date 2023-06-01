@@ -17,6 +17,7 @@ input {outline: none; border: none;}
 .rel {position: relative;}
 .abs {position: absolute;}
 .none {display: none !important;}
+.block { display: block !important}
 .block { display: block;}
 .ml-auto {margin-left: auto;}
 .mr-auto {margin-right: auto;}
@@ -70,6 +71,9 @@ aside .controls-wrapper { padding-left: 1rem; margin-bottom: 1rem;}
 aside .controls-wrapper .theme-toggle { padding: 1rem; background-color: var(--workspace-bg-color);}
 aside .controls-wrapper .theme-toggle .toggle {background-color: var(--primary); height: 25px; width: 55px; border-radius: 30px; padding: 4px 6px; cursor: pointer;}
 aside .controls-wrapper .theme-toggle .toggle > .slider {background-color: var(--secondary-bg-color); height: 17px; width: 17px; border-radius: 50%;}
+aside .conditional-render { width: 240px; display: flex; gap: 10px; flex-direction: column;} 
+aside .conditional-render input[type="text"] { padding: 5px; font-size: 1rem; }
+aside .conditional-render .create-workspace { width: max-content; background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); } 
 
 
 main { height: calc(100dvh - 90px); padding: 1rem; display: flex; overflow-x: scroll; flex-wrap: nowrap; gap: 1rem;}

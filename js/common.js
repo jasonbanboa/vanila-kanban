@@ -196,9 +196,11 @@ function renderAside() {
       ${workspaceTabs || ''}     
     </ul>
     <div class="create-new-workspace">
-      <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M0 2.889A2.889 2.889 0 0 1 2.889 0H13.11A2.889 2.889 0 0 1 16 2.889V13.11A2.888 2.888 0 0 1 13.111 16H2.89A2.889 2.889 0 0 1 0 13.111V2.89Zm1.333 5.555v4.667c0 .859.697 1.556 1.556 1.556h6.889V8.444H1.333Zm8.445-1.333V1.333h-6.89A1.556 1.556 0 0 0 1.334 2.89V7.11h8.445Zm4.889-1.333H11.11v4.444h3.556V5.778Zm0 5.778H11.11v3.11h2a1.556 1.556 0 0 0 1.556-1.555v-1.555Zm0-7.112V2.89a1.555 1.555 0 0 0-1.556-1.556h-2v3.111h3.556Z" fill="#828FA3"/></svg>
-      + Create New Workspace
-      <div class="abs">
+      <div class="create-new-workspace-container">
+        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M0 2.889A2.889 2.889 0 0 1 2.889 0H13.11A2.889 2.889 0 0 1 16 2.889V13.11A2.888 2.888 0 0 1 13.111 16H2.89A2.889 2.889 0 0 1 0 13.111V2.89Zm1.333 5.555v4.667c0 .859.697 1.556 1.556 1.556h6.889V8.444H1.333Zm8.445-1.333V1.333h-6.89A1.556 1.556 0 0 0 1.334 2.89V7.11h8.445Zm4.889-1.333H11.11v4.444h3.556V5.778Zm0 5.778H11.11v3.11h2a1.556 1.556 0 0 0 1.556-1.555v-1.555Zm0-7.112V2.89a1.555 1.555 0 0 0-1.556-1.556h-2v3.111h3.556Z" fill="#828FA3"/></svg>
+        + Create New Workspace
+      </div>
+      <div class="abs conditional-render none">
         <input type="text" class="workspace-name" placeholder="Enter workspace name" />
         <input type="button" value="Create workspace" class="create-workspace">
       </div>
@@ -225,21 +227,23 @@ function renderAside() {
   </ul>
   `;
 
-  const $createNewWorkspace = $aside.querySelector('.create-new-workspace');
+  const $createNewWorkspace = $aside.querySelector('.create-new-workspace-container');
+  const $conditionalRenderCreateWorkspace = $aside.querySelector('.conditional-render');
   const $workspaceNameInput = $aside.querySelector('input.workspace-name');
   const $createWorkspaceButton = $aside.querySelector('input.create-workspace');
 
   $createNewWorkspace.addEventListener('click', () => {
 
     // dispay none block here
-    console.log($workspaceNameInput,
-      $createWorkspaceButton)
-      
-    $workspaceNameInput.focus();
+    if ($conditionalRenderCreateWorkspace.classList.contains('none')) {
+      $conditionalRenderCreateWorkspace.classList.remove('none');
+      $createNewWorkspace.classList.add('none');
+      $workspaceNameInput.focus();
+    }
     
   });
 
-  $createWorkspaceButton.addEventListener('click', () => {
+  $createWorkspaceButton.addEventListener('mousedown', () => {
     const input = $workspaceNameInput.value.trim();
     if (!input) return;
 
@@ -251,10 +255,16 @@ function renderAside() {
     } 
 
     kanbanData.workspaces.push(createdWorkspace);
+    history.replaceState({ }, '', `/index.html?workspaceID=${createdWorkspace.workspaceID}`);
     updateKanbanData(kanbanData);
-    
-    // update url to new workspace
-})
+  });
+
+  $workspaceNameInput.addEventListener('focusout', () => {
+    if ($createNewWorkspace.classList.contains('none')) {
+      $conditionalRenderCreateWorkspace.classList.add('none');
+      $createNewWorkspace.classList.remove('none');
+    }
+  });
 
 }
 
