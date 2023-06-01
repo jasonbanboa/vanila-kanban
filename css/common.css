@@ -79,12 +79,13 @@ header .wrapper { border-bottom: 1px solid var(--border-color); padding: 1rem 2r
 
 aside { color: var(--text-low-contrast); background-color: var(--secondary-bg-color); min-width: 300px; padding: 1rem 1.5rem; padding-bottom: 4rem; padding-right: 2rem; border-right: 1px solid var(--border-color); height: calc(100dvh - 90px); padding-left: 0;}
 aside .total-workspaces {padding-left: 1.5rem; padding-bottom: 1rem;}
-aside .nav > li {padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
+aside .nav > li {display: flex; align-items: center; padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
 aside .nav > li.active { color: var(--workspace-bg-color); background-color: var(--primary);}
 .dark aside .nav > li.active { color: var(--text-high-contrast); background-color: var(--primary);}
 
-aside .nav > li:hover { color: var(--primary); background-color: var(--primary-light);}
+aside .nav > li:hover { cursor: pointer; color: var(--primary); background-color: var(--primary-light);}
 aside .nav > li svg { margin-right: 1rem;}
+aside .nav > li a {flex: 1}
 aside .create-new-workspace {margin-left: 1.5rem; display: inline-block; font-size: 1rem; margin-top: 1rem; transition: all .25s;}
 aside .create-new-workspace:hover {color: var(--primary);}
 aside .create-new-workspace svg { margin-right: 1rem; }
@@ -138,7 +139,7 @@ main .section .create-todo span {font-size: 27px; margin-right: 5px}
 
 dialog { border: none; border-radius: 10px; height: 500px; width: 500px; background-color: rgba(0, 0, 0, 0.732);}
 
-
+.hide {transform: translateX(-100%); display: none;}
 
 .backdrop {inset: 0; background-color:  rgba(0, 0, 0, 0.7); z-index: 2;}
 
@@ -163,3 +164,4 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .dark input[type="submit"] {color: white !important }
 .dark input[type="button"] {color: white !important }
 
+.show-aside { left: 0; bottom: 50px; cursor: pointer; color: white; background-color: var(--primary); display: flex; align-items: center; padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
