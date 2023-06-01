@@ -6,7 +6,7 @@ import {
   findWorkspaceArrIndex,
   findSectionArrIndex,
   closeEditDialog,
-  generateUniqueID,
+  createSection,
 } from '../lib/util.js' 
 
 const $workspaceNameeContainer = $('.workspace-title-conditional-render');
@@ -32,26 +32,23 @@ export function addStaticEventListeners() {
     }
   });
 
+  $newSectionform.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = $newSectionform.sectionName.value.trim();
+    if (!input) return;
+    
+    createSection(input);
+    $newSectionform.reset();
+    $newSectionform.sectionName.blur() 
+  });
+
   $newSectionform.querySelector('input[type="button"]').addEventListener('mousedown', (e) => {
     const input = $newSectionform.sectionName.value.trim();
     if (!input) return;
-
-    const kanbanData = getKanbanData();
-    const workspace = getCurrentWorkspace();
-
-    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-
-    const createdSection = {
-      sectionID: generateUniqueID(),
-      sectionName: input,
-      todos: []
-    }
-
-    workspace.sections.push(createdSection);
-    kanbanData.workspaces[workspaceArrIndex] = workspace;
+    
+    createSection(input);
     $newSectionform.reset();
     $newSectionform.sectionName.blur() 
-    updateKanbanData(kanbanData);
   });
 
   $newSectionform.sectionName.addEventListener('focusout', () => {
