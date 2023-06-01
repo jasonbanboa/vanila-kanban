@@ -25,6 +25,15 @@ const $editTodoForm = $('.edit-todo-form');
 function addDynamicEventListeners() {
 
   dragHandler();
+  const $addTodoActionButtons = $$('.actions-popup .add-todo');
+  $addTodoActionButtons.forEach($button => {
+    $button.addEventListener('click', () => {
+      const $section = $button.closest('.section');
+      const $addTodoButton = $section.querySelector('.create-todo-conditional-render .create-todo');
+      console.log($addTodoButton);
+      $addTodoButton.click()
+    });
+  })
 
   const $deleteSections = $$('li.delete-section');
   $deleteSections.forEach(($deleteSectionButton) => {
@@ -167,7 +176,6 @@ function addDynamicEventListeners() {
   });
 }
 
-// renders workspace
 function renderAside() {
   const $aside = $('aside');
   const { workspaces } = getKanbanData();
@@ -384,8 +392,6 @@ window.onload = () => {
     $$('.section .actions-popup').forEach(($popup) => {
       if (!$popup.classList.contains('none') && !$popup.contains(e.target)) {
         $popup.classList.add('none');
-        console.log("close");
-        console.log(e.target);
       }  
     })
   })

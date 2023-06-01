@@ -169,4 +169,5 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .workspace-backdrop {inset: 0; z-index: 10;}
 .workspace-backdrop .actions-popup { cursor: default; box-shadow: 0 2px 6px var(--todo-shadow);  background-color: var(--secondary-bg-color); width: 275px; position: absolute; right: 50px; top: 50px; padding: 1rem;  }
 .workspace-backdrop .actions-popup li {cursor: pointer;}
+.workspace-backdrop .actions-popup li:hover {background-color: var(--bg-transparent);}
 .workspace-backdrop .actions-popup li:last-of-type {color: rgb(255, 138, 138);}

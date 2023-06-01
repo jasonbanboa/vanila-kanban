@@ -26,7 +26,7 @@ const $deletWorspace = $('.delete-worspace');
 
 export function addStaticEventListeners() {
 
-  $deletWorspace.addEventListener('click', (e) => {
+  $deletWorspace.addEventListener('click', () => {
     const kanbanData = getKanbanData();
     const { workspaceID } = getCurrentWorkspace();
     const editedWorkspaces = kanbanData.workspaces.filter((workspace) => workspace.workspaceID !== workspaceID);
