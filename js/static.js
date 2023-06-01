@@ -7,6 +7,8 @@ import {
   findSectionArrIndex,
   closeEditDialog,
   createSection,
+  openWorkspaceDialog,
+  closeWorkspaceDialog,
 } from '../lib/util.js' 
 
 const $workspaceNameeContainer = $('.workspace-title-conditional-render');
@@ -17,8 +19,32 @@ const $editTodoForm = $('.edit-todo-form');
 const $deleteTodo = $('.delete-todo');
 const $cancleEditTodo = $('.cancel-edit-todo'); 
 const $backdrop = $('.backdrop');
+const $workspaceBackdrop = $('.workspace-backdrop');
+const $workspaceOptions = $('.workspace-options');
+const $deletWorspace = $('.delete-worspace');
+
 
 export function addStaticEventListeners() {
+
+  $deletWorspace.addEventListener('click', (e) => {
+    const kanbanData = getKanbanData();
+    const { workspaceID } = getCurrentWorkspace();
+    const editedWorkspaces = kanbanData.workspaces.filter((workspace) => workspace.workspaceID !== workspaceID);
+    console.log(editedWorkspaces);
+    kanbanData.workspaces = editedWorkspaces;
+    history.replaceState({ }, '', `/index.html?workspaceID=${kanbanData.workspaces[0].workspaceID}`);
+    updateKanbanData(kanbanData);
+    closeWorkspaceDialog();
+    
+  });
+
+  $workspaceBackdrop.addEventListener('click', (e) => {
+    if (e.target === $workspaceBackdrop) closeWorkspaceDialog();
+  });
+
+  $workspaceOptions.addEventListener('click', () => {
+    openWorkspaceDialog();
+  });
 
   const $createNewSection = $('.create-new-section');
 

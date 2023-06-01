@@ -165,3 +165,8 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .dark input[type="button"] {color: white !important }
 
 .show-aside { left: 0; bottom: 50px; cursor: pointer; color: white; background-color: var(--primary); display: flex; align-items: center; padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
+
+.workspace-backdrop {inset: 0; z-index: 10;}
+.workspace-backdrop .actions-popup { cursor: default; box-shadow: 0 2px 6px var(--todo-shadow);  background-color: var(--secondary-bg-color); width: 275px; position: absolute; right: 50px; top: 50px; padding: 1rem;  }
+.workspace-backdrop .actions-popup li {cursor: pointer;}
+.workspace-backdrop .actions-popup li:last-of-type {color: rgb(255, 138, 138);}
