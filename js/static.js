@@ -19,7 +19,7 @@ const $cancleEditTodo = $('.cancel-edit-todo');
 const $backdrop = $('.backdrop');
 
 export function addStaticEventListeners() {
-  
+
   const $createNewSection = $('.create-new-section');
 
   const $newSectionform = $createNewSection.querySelector('.new-section-form');

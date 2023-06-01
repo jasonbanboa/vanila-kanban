@@ -2,9 +2,11 @@
 ul { list-style: none;}
 button { background-color: transparent; border: none; cursor: pointer;}
 a {text-decoration: none;}
-input {outline: none; border: none;}
+input {outline: none; border: none; }
+input[type="text"] { background: var(--secondary-bg-color);}
+textarea { background: var(--secondary-bg-color); }
 
-
+body, aside, main, section, header {transition: all .25s;}
 .flex { display: flex;}
 .flex-1 { flex: 1}
 .flex-col { flex-direction: column;}
@@ -36,6 +38,7 @@ input {outline: none; border: none;}
 
 /* add light-theme */
 body {
+  
   --secondary-bg-color: #fff; 
   --text-low-contrast: #828fa3;
   --text-high-contrast: #333;
@@ -51,6 +54,23 @@ body {
   color: var(--text-high-contrast);
 }
 
+body.dark {
+  --todo-shadow: rgb(24, 24, 24);
+  --todo-hover-color: rgba(19, 18, 18, 0.267);
+  --bg-transparent: rgba(19, 18, 18, 0.267);
+  --workspace-bg-color: #20212C;
+  --border-color: #3E3F4E;
+  --primary: #635fc7;
+  --secondary-bg-color: #2B2C37;
+  --text-high-contrast: #fff;
+  --text-low-contrast: #828fa3;
+  background-color: var(--workspace-bg-color);
+  color: var(--text-high-contrast);
+}
+
+body.dark .slider { transform: translateX(27px);}
+.slider {transition: all .25s}
+
 header { height: 90px; background-color: var(--secondary-bg-color); }
 header .logo { display: flex; align-items: center; min-width: 300px; padding: 1rem 1.5rem; height: 100%; border: 1px solid var(--border-color);}
 header .wrapper { border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center;}  
@@ -61,6 +81,8 @@ aside { color: var(--text-low-contrast); background-color: var(--secondary-bg-co
 aside .total-workspaces {padding-left: 1.5rem; padding-bottom: 1rem;}
 aside .nav > li {padding: 1rem; padding-left: 1.5rem; border-bottom-right-radius: 30px; border-top-right-radius: 30px; transition: all .25s;}
 aside .nav > li.active { color: var(--workspace-bg-color); background-color: var(--primary);}
+.dark aside .nav > li.active { color: var(--text-high-contrast); background-color: var(--primary);}
+
 aside .nav > li:hover { color: var(--primary); background-color: var(--primary-light);}
 aside .nav > li svg { margin-right: 1rem;}
 aside .create-new-workspace {margin-left: 1.5rem; display: inline-block; font-size: 1rem; margin-top: 1rem; transition: all .25s;}
@@ -90,13 +112,16 @@ main .section .section-body .todo:hover {background-color: var(--todo-hover-colo
 main .section .section-body .todo:hover .icon {display: block;}
 main .section .section-body .todo .icon { border-radius: 5px; transform: translateY(-50%); display: none; position: absolute; right: 10px; top: 50%; width: 25px; height: 25px; padding: 6px;}
 main .section .section-body .todo .icon:hover {background-color: rgb(224, 224, 224);}
+.dark main .section .section-body .todo .icon:hover {background-color: var(--bg-transparent);}
 main .section .section-body .todo .icon svg {display: block;}
 main .section .create-todo {margin-top: 1rem; color: var(--text-low-contrast); cursor: pointer; font-size: 15px; display: flex; align-items: center; padding: 10px; border-radius: 10px; width: 100%; height: 30px;}
 main .section .create-todo:hover {background-color: var(--todo-hover-color);}
 main .section .create-todo span {font-size: 27px; margin-right: 5px}
 
 .is-dragging { background-color: var(--text-high-contrast) !important; color: var(--workspace-bg-color) !important; scale: 1.05; }
+.dark .is-dragging { background-color: var(--bg-transparent) !important; color: var(--primary) !important; scale: 1.05; }
 .is-dragging .todo {box-shadow: none !important}
+
 
 .conditional-render {cursor: pointer; min-width: 220px;}
 .conditional-render input {padding: 3px; border-radius: 5px; width: 100%; border: none; outline: none;}
@@ -121,15 +146,20 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .edit-todo-dialog form textarea {width: 100%; height: 100%; border-radius: 10px; padding: 10px; overflow: hidden; resize: none; border: none; outline: none;}
 .edit-todo-dialog form textarea:focus { box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary); }
 .edit-todo-dialog form input[type="submit"] {background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
+.dark .edit-todo-dialog form input[type="submit"] {color: white !important }
 .edit-todo-dialog form .controls { left: 105%; top: 0; display: flex; flex-direction: column; gap: 10px;}
 .edit-todo-dialog form .controls button { transition: all .25s; border-radius: 3px; background-color:  rgba(0, 0, 0, 0.6); color: white; padding: 5px 8px; white-space: nowrap;}
 .edit-todo-dialog form .controls button:hover { transform: translateX(5px); background-color: rgba(0, 0, 0, 0.8); }     
 
 .create-new-section { min-width: 275px; background-color: var(--secondary-bg-color); cursor: pointer; font-size: 15px; box-shadow: 0 2px 6px var(--todo-shadow); display: flex; align-items: center; padding: 10px; border-radius: 3px; height: 36px; width: 275px; border: 1px solid var(--border-color);}
 .create-new-section .new-section-form { transition: all .2s; left: 0; top: 3%; height: 100%; overflow: hidden; width: 100%; border-radius: 3px; padding: 10px; z-index: 1; background-color: var(--secondary-bg-color);}
-.create-new-section .new-section-form input {margin-top: 1px; font-size: 15px; width: 100%; padding: 5px;}
+.create-new-section .new-section-form input {margin-top: 1px; font-size: 15px; width: 100%; padding: 5px;  background: var(--secondary-bg-color)}
 .create-new-section .new-section-form input:focus {box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary);}
 .grow {height: 90px; transition: all .2s;}
 .create-new-section { color: var(--text-low-contrast);}
 .create-new-section span { font-size: 27px; margin-right: 5px;}
 .create-new-section form input[type="button"] { margin-top: 10px; background-color: var(--primary); width: 100px; color: var(--secondary-bg-color); top: 115%; left: 0; border-radius: 3px;}
+
+.dark input[type="submit"] {color: white !important }
+.dark input[type="button"] {color: white !important }
+

@@ -15,9 +15,6 @@ import {
 } from '../lib/util.js' 
 
 
-// // incase of reset 
-// setMockData()
-
 const $main = $('.workspace main'); 
 const $workspaceNameeContainer = $('.workspace-title-conditional-render');
 const $workspaceName = $workspaceNameeContainer.querySelector('.workspace-name');
@@ -231,6 +228,11 @@ function renderAside() {
   const $conditionalRenderCreateWorkspace = $aside.querySelector('.conditional-render');
   const $workspaceNameInput = $aside.querySelector('input.workspace-name');
   const $createWorkspaceButton = $aside.querySelector('input.create-workspace');
+  
+  const $toggle = $('.toggle');
+  $toggle.addEventListener('click', () => {
+    document.body.classList.contains('dark') ? document.body.classList.remove('dark') : document.body.classList.add('dark'); 
+  });
 
   $createNewWorkspace.addEventListener('click', () => {
 
