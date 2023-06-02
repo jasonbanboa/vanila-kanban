@@ -34,10 +34,8 @@ const $deleteSectionButton = $('.section-backdrop .actions-popup li.delete-secti
 const $copySectionButton = $('.section-backdrop .actions-popup li.copy-section');
 const $backButtons = $sectionPopup.querySelectorAll('.back');
 const $sectionPopupTextarea = $sectionPopup.querySelector('textarea');
-
-
-
-console.log($backButtons);
+const $moveSectionButton = $sectionPopup.querySelector('.move-section');
+const $moveSectionView = $sectionPopup.querySelector('.move-section-view')
 
 export function addStaticEventListeners() {
 
@@ -46,6 +44,74 @@ export function addStaticEventListeners() {
       const $subSection = $button.closest('.sub-section');
       $subSection.classList.add('none');
       $mainSectionPopup.classList.remove('none'); 
+    });
+  });
+
+  $moveSectionButton.addEventListener('click', (e) => {
+    $moveSectionView.classList.remove('none');
+    $mainSectionPopup.classList.add('none');
+    
+    const { dataset : { sectionid } } = $sectionPopup;
+
+    const kanbanData = getKanbanData();
+    const workspace = getCurrentWorkspace();
+    
+    const workspaceOptions = kanbanData.workspaces.reduce((acc, { workspaceID, workspaceName }, i) => {
+      return acc += `<option value="${i}">${workspaceID === workspace.workspaceID ? `${workspaceName} (current)` : workspaceName}</option>`;
+    }, '');
+    
+    // TODO: sort sections options to have current workspace as default
+
+    const sectionOptions = workspace.sections.reduce((acc, { sectionID }, i) => {
+      return acc += `<option value="${i}">${sectionID === sectionid ? `${i + 1} (current)` : i + 1}</option>`;
+    }, '');
+
+    $moveSectionView.querySelector('.con').innerHTML = `
+      <select name="workspace" class="flex-1">
+        ${workspaceOptions}
+      </select>
+
+      <select name="section" class="flex-1">
+        ${sectionOptions}
+      </select>
+
+      <input class="move-section-to" type="button" value="Move section">
+    `;
+
+    $moveSectionView.querySelector('.move-section-to').addEventListener('click', () => {
+
+      
+      const workspaceToArrIndex = $moveSectionView.querySelector('select[name="workspace"]').value;
+      const sectionToArrIndex = $moveSectionView.querySelector('select[name="section"]').value;
+
+     
+      console.log(workspaceToArrIndex, sectionToArrIndex);
+
+      // workspace to move to
+      const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+      const sectionToMoveArrIndex = findSectionArrIndex(workspace, sectionid);
+
+
+      const replace = structuredClone(kanbanData.workspaces[workspaceToArrIndex].sections[sectionToArrIndex])
+      const moving = structuredClone(kanbanData.workspaces[workspaceArrIndex].sections[sectionToMoveArrIndex]);
+
+
+
+      // kanbanData
+      kanbanData.workspaces[workspaceToArrIndex].sections[sectionToArrIndex] = moving;
+      kanbanData.workspaces[workspaceArrIndex].sections[sectionToMoveArrIndex] = replace;
+
+      // works
+      console.log(kanbanData);
+
+    }); 
+
+    $moveSectionView.querySelector('select[name="workspace"]').addEventListener('change', (e) => {
+      const workspaceArrIndex = e.target.value;
+      
+      $moveSectionView.querySelector('select[name="section"]').innerHTML = kanbanData.workspaces[workspaceArrIndex].sections.reduce((acc, { sectionID }, i) => {
+        return acc += `<option value="${i}">${sectionID === sectionid ? `${i + 1} (current)` : i + 1}</option>`;
+      }, '');
     });
   });
 

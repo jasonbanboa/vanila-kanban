@@ -2,7 +2,7 @@
 ul { list-style: none;}
 button { background-color: transparent; border: none; cursor: pointer;}
 a {text-decoration: none;}
-input {outline: none; border: none; }
+input {outline: none; border: none; cursor: pointer; }
 input[type="text"] { background: var(--secondary-bg-color);}
 textarea { background: var(--secondary-bg-color); }
 
@@ -174,9 +174,12 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .section-backdrop .actions-popup ul li:last-child {color: rgb(255, 138, 138);}
 .section-backdrop .actions-popup  textarea {width: 100%; height: 100%; border-radius: 10px; padding: 10px; overflow: hidden; resize: none; border: none; outline: none;}
 .section-backdrop .actions-popup  textarea:focus {box-shadow:0 0 1px inset var(--primary-light); outline: 2px solid var(--primary);  }
-.section-backdrop .copy-section-view { height: max-content; position: absolute; inset: 0; padding: 1rem; background-color: var(--secondary-bg-color);}
-.section-backdrop .copy-section-view h4 {border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
+/* .section-backdrop .copy-section-view {}
+.section-backdrop .copy-section-view h4 {border-bottom: 1px solid var(--border-color); padding-bottom: 10px;} */
 .section-backdrop .copy-section-view label {margin: 10px  0; display: block;}
-.section-backdrop .copy-section-view input[type="button"] { margin-top: 10px; background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); border-radius: 3px;}
-.sub-section .back {width: 20px; height: 20px; cursor: pointer;}
+
+.sub-section { min-height: max-content; position: absolute; inset: 0; padding: 1rem; background-color: var(--secondary-bg-color);}
+.sub-section h4 { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+.sub-section .back {width: 20px; height: 20px; cursor: pointer; }
 .sub-section .back svg {width: 100%; height: 100%;}
+.sub-section input[type="button"] { margin-top: 10px; background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); border-radius: 3px; width: max-content;}
