@@ -11,6 +11,7 @@ import {
   openWorkspaceDialog,
   closeWorkspaceDialog,
   closeSectionDialog,
+  generateUniqueID,
 } from '../lib/util.js' 
 
 const $workspaceNameeContainer = $('.workspace-title-conditional-render');
@@ -25,12 +26,69 @@ const $workspaceBackdrop = $('.workspace-backdrop');
 const $workspaceOptions = $('.workspace-options');
 const $deletWorspace = $('.delete-worspace');
 const $sectionBackdrop = $('.section-backdrop');
+const $sectionPopup = $('.section-backdrop .actions-popup');
+const $mainSectionPopup = $sectionPopup.querySelector('.main-section');
+const $copyView = $sectionPopup.querySelector('.copy-section-view');1
 const $addTodoActionButton = $('.section-backdrop .actions-popup .add-todo');
 const $deleteSectionButton = $('.section-backdrop .actions-popup li.delete-section');
+const $copySectionButton = $('.section-backdrop .actions-popup li.copy-section');
+const $backButtons = $sectionPopup.querySelectorAll('.back');
+const $sectionPopupTextarea = $sectionPopup.querySelector('textarea');
 
-console.log($deleteSectionButton);
+
+
+console.log($backButtons);
 
 export function addStaticEventListeners() {
+
+  $backButtons.forEach($button => {
+    $button.addEventListener('click', () => {
+      const $subSection = $button.closest('.sub-section');
+      $subSection.classList.add('none');
+      $mainSectionPopup.classList.remove('none'); 
+    });
+  });
+
+  $copySectionButton.addEventListener('click', () => {
+    if ($copyView.classList.contains('none')) {
+      $mainSectionPopup.classList.add('none');
+      $copyView.classList.remove('none');
+      $copyView.querySelector('textarea').focus();
+    }
+  });
+
+  $sectionPopup.querySelector('.create-section-copy').addEventListener('click', (e) => {
+    const { dataset : { sectionid } } = $sectionPopup;
+    const input = $sectionPopupTextarea.value.trim();
+
+    if (!input) return;
+
+    const kanbanData = getKanbanData();
+    const workspace = getCurrentWorkspace();
+    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+
+    const updatedSections = workspace.sections.reduce((sectionsArr, section) => {
+      if (section.sectionID === sectionid) {
+        const clonedTodos = section.todos.reduce((todoArr, todo) => [...todoArr, { ...todo, todoID: generateUniqueID() }] ,[])
+
+        const sectionClone = {
+          sectionID: generateUniqueID(),
+          sectionName: input,
+          todos: clonedTodos,
+        }
+        
+        return [...sectionsArr, section, sectionClone];
+      }
+      return [...sectionsArr, section];
+    }, []);
+
+    kanbanData.workspaces[workspaceArrIndex].sections = updatedSections;
+    updateKanbanData(kanbanData);
+
+    $sectionPopupTextarea.value = ''
+    closeSectionDialog();
+
+  });
 
   $addTodoActionButton.addEventListener('click', () => {
     const { dataset : { sectionid } } = $addTodoActionButton.closest('.actions-popup');
@@ -43,14 +101,14 @@ export function addStaticEventListeners() {
     const { dataset : { sectionid: sectionID } } = $addTodoActionButton.closest('.actions-popup');
 
     const kanbanData = getKanbanData();
-    const workspace = getCurrentWorkspace();
+    const workspace = getCurrentWorkspace();  
     const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
 
     const editedSections = workspace.sections.filter((section) => section.sectionID !== sectionID);
     workspace.sections = editedSections;
     kanbanData.workspaces[workspaceArrIndex] = workspace;
     updateKanbanData(kanbanData);
-    closeSectionDialog();
+    closeSectionDialog();         
   });
 
   $sectionBackdrop.addEventListener('click', (e) => {
