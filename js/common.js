@@ -12,6 +12,7 @@ import {
   findSectionArrIndex,
   openEditDialog,
   closeEditDialog,
+  openSectionDialog,
 } from '../lib/util.js' 
 
 
@@ -25,16 +26,7 @@ const $editTodoForm = $('.edit-todo-form');
 function addDynamicEventListeners() {
 
   dragHandler();
-  const $addTodoActionButtons = $$('.actions-popup .add-todo');
-  $addTodoActionButtons.forEach($button => {
-    $button.addEventListener('click', () => {
-      const $section = $button.closest('.section');
-      const $addTodoButton = $section.querySelector('.create-todo-conditional-render .create-todo');
-      console.log($addTodoButton);
-      $addTodoButton.click()
-    });
-  })
-
+  
   const $deleteSections = $$('li.delete-section');
   $deleteSections.forEach(($deleteSectionButton) => {
     $deleteSectionButton.addEventListener('click', (e) => {
@@ -55,12 +47,8 @@ function addDynamicEventListeners() {
 
   const $sectionActions = $$('.section .actions');
   $sectionActions.forEach(($action) => {
-    $action.addEventListener('click', () => {
-      const $popup = $action.closest('.section').querySelector('.actions-popup');
-      
-      // if ($popup.classList.contains('none')) {
-        $popup.classList.remove('none');
-      // }
+    $action.addEventListener('click', (e) => {
+      openSectionDialog(e.target);
 
     });
   });
@@ -180,12 +168,8 @@ function renderAside() {
   const $aside = $('aside');
   const { workspaces } = getKanbanData();
   const currentWorkspace = getCurrentWorkspace();
-
-  console.log(currentWorkspace);
   
   const workspaceTabs = workspaces && workspaces.reduce((innerHTML, { workspaceID, workspaceName }) => {
-
-    console.log(innerHTML, { workspaceID, workspaceName });
     return innerHTML += `
       <li class="${ workspaceID === currentWorkspace.workspaceID ? 'active' : '' }">
         <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M0 2.889A2.889 2.889 0 0 1 2.889 0H13.11A2.889 2.889 0 0 1 16 2.889V13.11A2.888 2.888 0 0 1 13.111 16H2.89A2.889 2.889 0 0 1 0 13.111V2.89Zm1.333 5.555v4.667c0 .859.697 1.556 1.556 1.556h6.889V8.444H1.333Zm8.445-1.333V1.333h-6.89A1.556 1.556 0 0 0 1.334 2.89V7.11h8.445Zm4.889-1.333H11.11v4.444h3.556V5.778Zm0 5.778H11.11v3.11h2a1.556 1.556 0 0 0 1.556-1.555v-1.555Zm0-7.112V2.89a1.555 1.555 0 0 0-1.556-1.556h-2v3.111h3.556Z" fill="#828FA3"/></svg>
@@ -324,15 +308,7 @@ function renderWorkspace() {
           <span class="ml-auto actions pointer" role="button">
             <svg class="actions" xmlns="http://www.w3.org/2000/svg" fill="#808080" viewBox="0 0 448 512"><path class="actions" d="M8 256a56 56 0 1 1 112 0A56 56 0 1 1 8 256zm160 0a56 56 0 1 1 112 0 56 56 0 1 1 -112 0zm216-56a56 56 0 1 1 0 112 56 56 0 1 1 0-112z"/></svg>
           </span>
-          <div class="abs none actions-popup">
-            <h4 class="text-center">List actions</h4>
-            <ul class="flex flex-col gap-1">
-              <li type="button" data-sectionid="${sectionID}" class="add-todo">Add todo...</li>
-              <li type="button" data-sectionid="${sectionID}" class="copy-section">Copy section...</li>
-              <li type="button" data-sectionid="${sectionID}" class="move-section">Move section...</li>
-              <li type="button" data-sectionid="${sectionID}" class="delete-section">Delete section</li>
-            </ul>
-          </div>
+          
         </div>
         <div class="section-body">
           ${todoHTML || ''}
@@ -386,14 +362,14 @@ export function reRender() {
 }
 
 window.onload = () => {
-  window.addEventListener('click', (e) => {
-    if (e.target.classList.contains('actions')) return;
+  // window.addEventListener('click', (e) => {
+  //   if (e.target.classList.contains('actions')) return;
     
-    $$('.section .actions-popup').forEach(($popup) => {
-      if (!$popup.classList.contains('none') && !$popup.contains(e.target)) {
-        $popup.classList.add('none');
-      }  
-    })
-  })
+  //   $$('.section .actions-popup').forEach(($popup) => {
+  //     if (!$popup.classList.contains('none') && !$popup.contains(e.target)) {
+  //       $popup.classList.add('none');
+  //     }  
+  //   })
+  // })
   main();
 } 

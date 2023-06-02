@@ -1,5 +1,6 @@
 import { 
   $, 
+  $$,
   getKanbanData,
   updateKanbanData,
   getCurrentWorkspace,
@@ -9,6 +10,7 @@ import {
   createSection,
   openWorkspaceDialog,
   closeWorkspaceDialog,
+  closeSectionDialog,
 } from '../lib/util.js' 
 
 const $workspaceNameeContainer = $('.workspace-title-conditional-render');
@@ -22,9 +24,23 @@ const $backdrop = $('.backdrop');
 const $workspaceBackdrop = $('.workspace-backdrop');
 const $workspaceOptions = $('.workspace-options');
 const $deletWorspace = $('.delete-worspace');
+const $sectionBackdrop = $('.section-backdrop');
+const $addTodoActionButton = $('.section-backdrop .actions-popup .add-todo');
 
+console.log($addTodoActionButton);
 
 export function addStaticEventListeners() {
+
+  $addTodoActionButton.addEventListener('click', () => {
+    const { dataset : { sectionid } } = $addTodoActionButton.closest('.actions-popup');
+    const $addTodoButton = $(`.section[data-index="${sectionid}"]`).querySelector('.create-todo');
+    closeSectionDialog();
+    $addTodoButton.click();
+  });
+
+  $sectionBackdrop.addEventListener('click', (e) => {
+    if (e.target === $sectionBackdrop) closeSectionDialog();
+  })
 
   $deletWorspace.addEventListener('click', () => {
     const kanbanData = getKanbanData();
