@@ -26,8 +26,9 @@ const $workspaceOptions = $('.workspace-options');
 const $deletWorspace = $('.delete-worspace');
 const $sectionBackdrop = $('.section-backdrop');
 const $addTodoActionButton = $('.section-backdrop .actions-popup .add-todo');
+const $deleteSectionButton = $('.section-backdrop .actions-popup li.delete-section');
 
-console.log($addTodoActionButton);
+console.log($deleteSectionButton);
 
 export function addStaticEventListeners() {
 
@@ -36,6 +37,20 @@ export function addStaticEventListeners() {
     const $addTodoButton = $(`.section[data-index="${sectionid}"]`).querySelector('.create-todo');
     closeSectionDialog();
     $addTodoButton.click();
+  });
+
+  $deleteSectionButton.addEventListener('click', (e) => {
+    const { dataset : { sectionid: sectionID } } = $addTodoActionButton.closest('.actions-popup');
+
+    const kanbanData = getKanbanData();
+    const workspace = getCurrentWorkspace();
+    const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
+
+    const editedSections = workspace.sections.filter((section) => section.sectionID !== sectionID);
+    workspace.sections = editedSections;
+    kanbanData.workspaces[workspaceArrIndex] = workspace;
+    updateKanbanData(kanbanData);
+    closeSectionDialog();
   });
 
   $sectionBackdrop.addEventListener('click', (e) => {

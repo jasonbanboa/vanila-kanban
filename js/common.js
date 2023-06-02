@@ -27,29 +27,12 @@ function addDynamicEventListeners() {
 
   dragHandler();
   
-  const $deleteSections = $$('li.delete-section');
-  $deleteSections.forEach(($deleteSectionButton) => {
-    $deleteSectionButton.addEventListener('click', (e) => {
-      const { dataset : { sectionid: sectionID } } = e.target;
-      console.log(sectionID);
-
-      const kanbanData = getKanbanData();
-      const workspace = getCurrentWorkspace();
-      const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-
-      const editedSections = workspace.sections.filter((section) => section.sectionID !== sectionID);
-      workspace.sections = editedSections;
-      kanbanData.workspaces[workspaceArrIndex] = workspace;
-      updateKanbanData(kanbanData);
-
-    });
-  });
+  // refactor delete section
 
   const $sectionActions = $$('.section .actions');
   $sectionActions.forEach(($action) => {
     $action.addEventListener('click', (e) => {
       openSectionDialog(e.target);
-
     });
   });
 
@@ -362,14 +345,5 @@ export function reRender() {
 }
 
 window.onload = () => {
-  // window.addEventListener('click', (e) => {
-  //   if (e.target.classList.contains('actions')) return;
-    
-  //   $$('.section .actions-popup').forEach(($popup) => {
-  //     if (!$popup.classList.contains('none') && !$popup.contains(e.target)) {
-  //       $popup.classList.add('none');
-  //     }  
-  //   })
-  // })
   main();
 } 
