@@ -36,7 +36,10 @@ body, aside, main, section, header {transition: all .25s;}
 .opacity-0 {opacity: 0;}
 .opacity-1 {opacity: 1;}
 
-/* add light-theme */
+html, body {
+  width: 100dvw;
+}
+
 body {
   --secondary-bg-color: #fff; 
   --text-low-contrast: #828fa3;
@@ -74,8 +77,10 @@ body.dark {
 body.dark .slider { transform: translateX(27px);}
 .slider {transition: all .25s}
 
-header { height: 90px; background-color: var(--secondary-bg-color); }
-header .logo { display: flex; align-items: center; min-width: 300px; padding: 1rem 1.5rem; height: 100%; border: 1px solid var(--border-color);}
+#app {overflow: hidden;}
+
+header { height: 90px; background-color: var(--secondary-bg-color); width: 100%; overflow-x: scroll;}
+header .logo { display: flex; align-items: center; min-width: 300px; word-wrap: break-word; padding: 1rem 1.5rem; height: 100%; border: 1px solid var(--border-color);}
 header .wrapper { border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center;}  
 
 .workspace {width: 100%;}
@@ -204,4 +209,9 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 ::-webkit-scrollbar-thumb {
   border-radius: 20px;
   background: var(--scroll-thumb)
+}
+
+@media (max-width: 670px) {
+  .logo, .workspace-name {font-size: 1rem; width: max-content;}
+  header .wrapper {padding: 1rem;}
 }
