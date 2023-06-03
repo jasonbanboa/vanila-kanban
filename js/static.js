@@ -35,7 +35,8 @@ const $copySectionButton = $('.section-backdrop .actions-popup li.copy-section')
 const $backButtons = $sectionPopup.querySelectorAll('.back');
 const $sectionPopupTextarea = $sectionPopup.querySelector('textarea');
 const $moveSectionButton = $sectionPopup.querySelector('.move-section');
-const $moveSectionView = $sectionPopup.querySelector('.move-section-view')
+const $moveSectionView = $sectionPopup.querySelector('.move-section-view');
+
 
 export function addStaticEventListeners() {
 
@@ -56,14 +57,20 @@ export function addStaticEventListeners() {
     const kanbanData = getKanbanData();
     const workspace = getCurrentWorkspace();
     
-    const workspaceOptions = kanbanData.workspaces.reduce((acc, { workspaceID, workspaceName }, i) => {
-      return acc += `<option value="${i}">${workspaceID === workspace.workspaceID ? `${workspaceName} (current)` : workspaceName}</option>`;
-    }, '');
+    const sortedWorkspaces = kanbanData.workspaces.reduce((acc, ws) => {
+      if (ws.workspaceID === workspace.workspaceID) {
+        return [ws, ...acc];
+      }
+      return [...acc, ws];
+    }, []);
     
-    // TODO: sort sections options to have current workspace as default
+    const workspaceOptions = sortedWorkspaces.reduce((acc, { workspaceID, workspaceName }, i) => {
+      return acc += `<option value="${workspaceID}">${workspaceID === workspace.workspaceID ? `${workspaceName} (current)` : workspaceName}</option>`;
+    }, '');
 
     const sectionOptions = workspace.sections.reduce((acc, { sectionID }, i) => {
-      return acc += `<option value="${i}">${sectionID === sectionid ? `${i + 1} (current)` : i + 1}</option>`;
+      acc += `<option value="${i}">${sectionID === sectionid ? `${i + 1} (current)` : i + 1}</option>`;
+      return acc;
     }, '');
 
     $moveSectionView.querySelector('.con').innerHTML = `
@@ -81,37 +88,84 @@ export function addStaticEventListeners() {
     $moveSectionView.querySelector('.move-section-to').addEventListener('click', () => {
 
       
-      const workspaceToArrIndex = $moveSectionView.querySelector('select[name="workspace"]').value;
+      const workspaceToID = $moveSectionView.querySelector('select[name="workspace"]').value;
       const sectionToArrIndex = $moveSectionView.querySelector('select[name="section"]').value;
 
-     
-      console.log(workspaceToArrIndex, sectionToArrIndex);
+      const workspaceToArrIndex = kanbanData.workspaces.findIndex(({ workspaceID }) => workspaceID === workspaceToID);
 
-      // workspace to move to
+      // remove and copy section from kanbanData
+      const movingSectionArrIndex = findSectionArrIndex(workspace, sectionid);
+
       const workspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
-      const sectionToMoveArrIndex = findSectionArrIndex(workspace, sectionid);
+      const clonedMovingSection = structuredClone(workspace.sections[movingSectionArrIndex]);
 
+      if (workspaceArrIndex === workspaceToArrIndex && +sectionToArrIndex === movingSectionArrIndex) {
+        return closeSectionDialog();
+      }
 
-      const replace = structuredClone(kanbanData.workspaces[workspaceToArrIndex].sections[sectionToArrIndex])
-      const moving = structuredClone(kanbanData.workspaces[workspaceArrIndex].sections[sectionToMoveArrIndex]);
+      // TODO same workspace diff section doesnt work
+      if (workspaceArrIndex === workspaceToArrIndex) {
+        const updatedSections = workspace.sections.reduce((acc, section, i) => {
+          if (section.sectionID === sectionid) 
+            return [...acc];
+          if (+sectionToArrIndex === i) {
 
+            const original = movingSectionArrIndex;
+            const to = i;
 
+            if (original < to) {
+              return [...acc, section, clonedMovingSection]
+            } 
+            return [...acc, clonedMovingSection, section]
+          }
+          return [...acc, section];
+        }, []); 
+        workspace.sections = updatedSections;
 
-      // kanbanData
-      kanbanData.workspaces[workspaceToArrIndex].sections[sectionToArrIndex] = moving;
-      kanbanData.workspaces[workspaceArrIndex].sections[sectionToMoveArrIndex] = replace;
+        kanbanData.workspaces[workspaceArrIndex] = workspace;
+        updateKanbanData(kanbanData);
+        return closeSectionDialog();
+      }
 
-      // works
-      console.log(kanbanData);
+      // diff workspace to diff workspace
+      kanbanData.workspaces[workspaceArrIndex].sections = workspace.sections.filter(({ sectionID }) => sectionID !== sectionid);
 
+      if (kanbanData.workspaces[workspaceToArrIndex].sections.length === +sectionToArrIndex) {
+        kanbanData.workspaces[workspaceToArrIndex].sections.push(clonedMovingSection);
+
+      } else {
+        const updatedSections = kanbanData.workspaces[workspaceToArrIndex].sections.reduce((acc, section, i) => {
+          if (i === +sectionToArrIndex) {
+            console.log('found destination')
+            return [...acc, clonedMovingSection, section];
+          }
+          return [...acc, section];
+        }, []);
+        kanbanData.workspaces[workspaceToArrIndex].sections = updatedSections;
+      }    
+      
+      updateKanbanData(kanbanData);
+      closeSectionDialog();
     }); 
 
     $moveSectionView.querySelector('select[name="workspace"]').addEventListener('change', (e) => {
-      const workspaceArrIndex = e.target.value;
+      const $sectionSelect = $moveSectionView.querySelector('select[name="section"]'); 
+      const workspaceID = e.target.value;
+
+      const workspaceArrIndex = kanbanData.workspaces.findIndex((workspace) => workspace.workspaceID === workspaceID);
+      const currentWorkspaceArrIndex = findWorkspaceArrIndex(kanbanData, workspace);
       
-      $moveSectionView.querySelector('select[name="section"]').innerHTML = kanbanData.workspaces[workspaceArrIndex].sections.reduce((acc, { sectionID }, i) => {
-        return acc += `<option value="${i}">${sectionID === sectionid ? `${i + 1} (current)` : i + 1}</option>`;
-      }, '');
+      if (kanbanData.workspaces[workspaceArrIndex].sections.length === 0) {
+        $sectionSelect.innerHTML = `<option value="${0}">1</option>`;
+      } else {
+        $sectionSelect.innerHTML = kanbanData.workspaces[workspaceArrIndex].sections.reduce((acc, { sectionID }, i) => {
+          acc += `<option value="${i}">${sectionID === sectionid ? `${i + 1} (current)` : i + 1}</option>`;
+          if (i === kanbanData.workspaces[workspaceArrIndex].sections.length - 1 && workspaceArrIndex !== currentWorkspaceArrIndex) {
+            acc += `<option value="${i + 1}">${kanbanData.workspaces[workspaceArrIndex].sections.length + 1}</option>`; 
+          }
+          return acc;
+        }, '');
+      }
     });
   });
 
