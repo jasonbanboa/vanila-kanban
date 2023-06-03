@@ -58,7 +58,7 @@ body.dark {
   --todo-hover-color: rgba(19, 18, 18, 0.267);
   --bg-transparent: rgba(19, 18, 18, 0.267);
   --workspace-bg-color: #20212C;
-  --border-color: #3E3F4E;
+  --border-color: #313142;
   --primary: #635fc7;
   --secondary-bg-color: #2B2C37;
   --text-high-contrast: #fff;
@@ -179,7 +179,12 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .section-backdrop .copy-section-view label {margin: 10px  0; display: block;}
 
 .sub-section { min-height: max-content; position: absolute; inset: 0; padding: 1rem; background-color: var(--secondary-bg-color);}
-.sub-section h4 { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+.sub-section h4 { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 10px;}
 .sub-section .back {width: 20px; height: 20px; cursor: pointer; }
 .sub-section .back svg {width: 100%; height: 100%;}
 .sub-section input[type="button"] { margin-top: 10px; background-color: var(--primary); padding: .5rem 1rem; color: var(--secondary-bg-color); border-radius: 3px; width: max-content;}
+.sub-section select { color: var(--text-low-contrast); border: none; cursor: pointer; outline: none; background-color: var(--workspace-bg-color); height: 100px; padding: 5px; padding-top: 1rem;}
+.sub-section select:hover {background-color: var(--border-color);}
+.move-section-view .con {gap: 10px;} 
+.move-section-view::before { position: absolute; content: 'workspace'; top:58px; left: 25px; color: var(--primary); font-size: 11px; }
+.move-section-view::after { position: absolute; content: 'section'; top: 107px; left: 25px; color: var(--primary); font-size: 11px; }
