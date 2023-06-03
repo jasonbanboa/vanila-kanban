@@ -44,6 +44,8 @@ body {
   --primary-light: #625fc73f;
   --primary: #635fc7;
   --workspace-bg-color: #f4f7fd;
+  --scroll-track: #f4f7fd;
+  --scroll-thumb: #d1d1ee;
   --border-color: #e4ebfa;
   --todo-shadow:#d8dff1;
   --todo-hover-color: rgb(245, 245, 245);
@@ -58,6 +60,8 @@ body.dark {
   --todo-hover-color: rgba(19, 18, 18, 0.267);
   --bg-transparent: rgba(19, 18, 18, 0.267);
   --workspace-bg-color: #20212C;
+  --scroll-track: #20212C;
+  --scroll-thumb: #11112448;
   --border-color: #313142;
   --primary: #635fc7;
   --secondary-bg-color: #2B2C37;
@@ -188,3 +192,16 @@ dialog { border: none; border-radius: 10px; height: 500px; width: 500px; backgro
 .move-section-view .con {gap: 10px;} 
 .move-section-view::before { position: absolute; content: 'workspace'; top:58px; left: 25px; color: var(--primary); font-size: 11px; }
 .move-section-view::after { position: absolute; content: 'section'; top: 107px; left: 25px; color: var(--primary); font-size: 11px; }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: var(--scroll-thumb)
+}
